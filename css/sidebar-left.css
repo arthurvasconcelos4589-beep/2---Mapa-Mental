@@ -1,0 +1,590 @@
+/* ============================================================
+   SIDEBAR ESQUERDA — PAINEL DE CONFIGURAÇÕES
+   ============================================================ */
+
+#mapsPanel {
+  position: fixed;
+  z-index: 50;
+  left: 0;
+  top: 0;
+  width: var(--sidebar-left);
+  height: 100vh;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  transition: transform .22s ease, background-color .2s ease;
+}
+
+#mapsPanel.closed {
+  transform: translateX(-100%);
+}
+
+/* ---------- Marca ---------- */
+
+#panelBrand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 16px 16px 12px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+#panelBrandIcon {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  color: var(--text);
+}
+
+/* ---------- Selo do mapa atual ---------- */
+
+#currentMapBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 12px 12px;
+  padding: 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--accent-tint);
+  font-size: 12px;
+}
+
+#currentMapBadgeDot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+#currentMapBadgeName {
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#currentMapBadgeCount {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 10.5px;
+}
+
+/* ---------- Abas ---------- */
+
+#panelTabs {
+  display: flex;
+  gap: 3px;
+  margin: 0 10px 10px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--tabs-bg);
+}
+
+.panel-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 2px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: .01em;
+}
+
+.panel-tab:hover {
+  background: var(--hover-tint);
+  border-color: transparent;
+  color: var(--text);
+}
+
+.panel-tab.active {
+  background: var(--panel);
+  border-color: var(--border);
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .25);
+}
+
+.panel-tab svg {
+  display: block;
+}
+
+/* ---------- Corpo das abas ---------- */
+
+#panelBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+  padding: 0 12px 12px;
+}
+
+.panel-subtitle {
+  padding: 10px 4px 8px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .16em;
+}
+
+/* ---------- Aba Mapas ---------- */
+
+#mapSearchInput {
+  width: 100%;
+  padding: 9px 11px;
+  margin-top: 2px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 12.5px;
+  outline: none;
+}
+
+#mapSearchInput:focus {
+  border-color: var(--btn-border-hover);
+  box-shadow: 0 0 0 1px var(--accent-soft);
+}
+
+#mapSearchInput::placeholder {
+  color: var(--muted);
+}
+
+#mapsList {
+  flex: 1;
+  min-height: 40px;
+  overflow-y: auto;
+}
+
+.map-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 46px;
+  margin-bottom: 4px;
+  padding: 0 4px 0 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 7px;
+  transition: background-color .12s ease;
+}
+
+.map-item:hover {
+  background: var(--hover-tint);
+}
+
+.map-item.active {
+  border-color: var(--border);
+  background: var(--accent-tint);
+}
+
+.map-item-dot {
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  margin-right: 9px;
+  border-radius: 50%;
+}
+
+.map-item-name {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  text-align: left;
+  cursor: pointer;
+}
+
+.map-item-name-text {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.map-item-name-meta {
+  display: block;
+  margin-top: 2px;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.map-item.active .map-item-name-text {
+  color: var(--accent);
+}
+
+.map-item-delete {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-left: 4px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  opacity: 0;
+  transition:
+    opacity .15s ease,
+    color .15s ease,
+    background .15s ease;
+}
+
+.map-item:hover .map-item-delete,
+.map-item:focus-within .map-item-delete {
+  opacity: 1;
+}
+
+.map-item-delete:hover {
+  color: #fff;
+  background: #a3313180;
+  border-color: transparent;
+}
+
+.panel-empty {
+  padding: 20px 6px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+#newMapBtn {
+  margin: 10px 0 0;
+  width: 100%;
+}
+
+/* ---------- Aba Tema ---------- */
+
+.theme-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.theme-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  text-align: left;
+}
+
+.theme-item:hover {
+  border-color: var(--btn-border-hover);
+}
+
+.theme-item.active {
+  border-color: var(--accent);
+  background: var(--accent-tint);
+}
+
+.theme-swatch {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  border: 1px solid rgba(128, 128, 128, .35);
+}
+
+.theme-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.theme-name {
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 650;
+}
+
+.theme-desc {
+  color: var(--muted);
+  font-size: 10.5px;
+}
+
+.theme-check {
+  flex-shrink: 0;
+  color: var(--accent);
+  font-size: 13px;
+}
+
+.swatch-dark-modern { background: linear-gradient(135deg, #050505, #1a1a1a); }
+.swatch-dracula { background: linear-gradient(135deg, #282a36, #bd93f9); }
+.swatch-ultron { background: linear-gradient(135deg, #17181a, #e0343f); }
+.swatch-jarvis { background: linear-gradient(135deg, #030a10, #2ee6ff); }
+.swatch-light-modern { background: linear-gradient(135deg, #e9eaec, #4361c9); }
+.swatch-creme { background: linear-gradient(135deg, #f2e9d8, #7a4b25); }
+
+/* ---------- Aba Layout ---------- */
+
+#layoutList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.layout-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  text-align: left;
+}
+
+.layout-item:hover:not(:disabled) {
+  border-color: var(--btn-border-hover);
+}
+
+.layout-item.active {
+  border-color: var(--accent);
+  background: var(--accent-tint);
+}
+
+.layout-item:disabled {
+  opacity: .45;
+  cursor: default;
+}
+
+.layout-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.layout-name {
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 650;
+}
+
+.layout-desc {
+  color: var(--muted);
+  font-size: 10.5px;
+}
+
+.layout-check {
+  flex-shrink: 0;
+  color: var(--accent);
+  font-size: 13px;
+}
+
+/* ---------- Aba Nós ---------- */
+
+.slider-row {
+  margin-bottom: 20px;
+}
+
+.slider-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 9px;
+  color: var(--text);
+  font-size: 12px;
+}
+
+.slider-value {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.slider-row input[type="range"] {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: var(--border);
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+}
+
+.slider-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--panel);
+  cursor: pointer;
+}
+
+.slider-row input[type="range"]::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--panel);
+  cursor: pointer;
+}
+
+.slider-row input[type="range"]:disabled {
+  opacity: .4;
+}
+
+/* ---------- Toggle (interruptor) ---------- */
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 6px 0 14px;
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.toggle-row input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 34px;
+  height: 19px;
+  border-radius: 10px;
+  background: var(--border);
+  transition: background-color .15s ease;
+}
+
+.toggle-switch::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--panel);
+  transition: transform .15s ease;
+}
+
+.toggle-row input:checked + .toggle-switch {
+  background: var(--accent);
+}
+
+.toggle-row input:checked + .toggle-switch::before {
+  transform: translateX(15px);
+  background: #fff;
+}
+
+.toggle-row input:disabled + .toggle-switch {
+  opacity: .4;
+}
+
+/* ---------- Aba Atalhos ---------- */
+
+.shortcut-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 4px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text);
+}
+
+.shortcut-row:last-child {
+  border-bottom: none;
+}
+
+.shortcut-key {
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--btn-bg);
+  color: var(--muted);
+  font-size: 10.5px;
+  font-family: inherit;
+  min-width: 30px;
+}
+
+.shortcut-key:hover {
+  color: var(--text);
+  border-color: var(--btn-border-hover);
+}
+
+.shortcut-key.listening {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-tint);
+}
+
+#resetShortcutsBtn {
+  margin-top: 12px;
+  width: 100%;
+}
+
+/* ---------- Rodapé ---------- */
+
+#panelFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 10.5px;
+}
+
+#panelHelpBtn {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}

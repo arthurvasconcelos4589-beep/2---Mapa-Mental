@@ -1,0 +1,130 @@
+/* ============================================================
+   ÁREA DO MAPA
+   ============================================================ */
+
+#board {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  cursor: grab;
+  background:
+    radial-gradient(
+      circle at 50% 48%,
+      var(--board-glow),
+      transparent 35%
+    ),
+    var(--bg);
+  transition: background-color .2s ease;
+}
+
+#board.panning {
+  cursor: grabbing;
+}
+
+#board.grid-on {
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+#connections {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.connection {
+  stroke: var(--connection-color);
+  stroke-width: var(--connection-width, 1.4);
+}
+
+.connection.extra {
+  stroke: var(--connection-color-extra);
+  stroke-dasharray: 5 4;
+}
+
+/*
+  O "mundo" do mapa. O zoom escala este contêiner inteiro
+  (posição e tamanho juntos), como uma câmera se
+  aproximando ou se afastando — os blocos não crescem
+  isoladamente, o espaçamento entre eles muda também.
+
+  Repare que #board NÃO muda de tamanho quando as barras
+  laterais abrem/fecham — elas apenas flutuam por cima.
+  Isso é o que mantém o mapa parado (sem esticar/encolher)
+  quando as abas são abertas.
+*/
+#canvas {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+  transition: transform .15s ease;
+}
+
+/*
+  A barra esquerda e a direita flutuam por cima do board;
+  esses elementos de interface (cabeçalho, ferramentas,
+  zoom) é que se reposicionam pra não ficar embaixo delas.
+*/
+#mapHeader {
+  position: absolute;
+  z-index: 25;
+  top: 15px;
+  left: calc(var(--sidebar-left-active, 0px) + 15px);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+  font-size: 12px;
+  pointer-events: none;
+  transition: left .22s ease;
+}
+
+#mapHeader .icon-button {
+  pointer-events: auto;
+}
+
+#currentMapTitle {
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: .06em;
+  color: var(--text);
+}
+
+#zoomControls {
+  position: absolute;
+  z-index: 25;
+  right: calc(var(--sidebar-right-active, 0px) + 15px);
+  bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 7px;
+  transition: right .22s ease;
+}
+
+#zoomControls button {
+  min-width: 30px;
+  padding: 7px 8px;
+}
+
+#zoomValue {
+  min-width: 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+@media (max-width: 800px) {
+  :root {
+    --sidebar-left: 220px;
+    --sidebar-right: 280px;
+  }
+}

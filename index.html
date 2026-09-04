@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark-modern">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapas de Anotações</title>
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/sidebar-left.css">
+  <link rel="stylesheet" href="css/board.css">
+  <link rel="stylesheet" href="css/nodes.css">
+  <link rel="stylesheet" href="css/sidebar-right.css">
+  <link rel="stylesheet" href="css/toolbar.css">
+  <link rel="stylesheet" href="css/dialog.css">
+</head>
+
+<body>
+<div id="app">
+
+  <!-- =========================================================
+       MENU ESQUERDO: PAINEL DE CONFIGURAÇÕES
+       ========================================================= -->
+  <aside id="mapsPanel">
+    <div id="panelBrand">
+      <span id="panelBrandIcon">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="12" cy="12" r="9"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </span>
+      <span id="panelBrandName">MindMap</span>
+    </div>
+
+    <div id="currentMapBadge">
+      <span id="currentMapBadgeDot"></span>
+      <span id="currentMapBadgeName">Nenhum mapa</span>
+      <span id="currentMapBadgeCount">0 nós</span>
+    </div>
+
+    <nav id="panelTabs">
+      <button class="panel-tab active" data-tab="mapas" type="button" title="Mapas">
+        <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+        <span>Mapas</span>
+      </button>
+      <button class="panel-tab" data-tab="tema" type="button" title="Tema">
+        <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.3"/><path d="M8 1.7 A6.3 6.3 0 0 1 8 14.3 Z" fill="currentColor" stroke="none"/></svg>
+        <span>Tema</span>
+      </button>
+      <button class="panel-tab" data-tab="layout" type="button" title="Layout">
+        <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><rect x="1" y="2.5" width="14" height="2.4" rx="1"/><rect x="1" y="6.8" width="14" height="2.4" rx="1"/><rect x="1" y="11.1" width="8" height="2.4" rx="1"/></svg>
+        <span>Layout</span>
+      </button>
+      <button class="panel-tab" data-tab="nos" type="button" title="Nós">
+        <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 1 L15 8 L8 15 L1 8 Z"/></svg>
+        <span>Nós</span>
+      </button>
+      <button class="panel-tab" data-tab="atalhos" type="button" title="Atalhos">
+        <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="3.5" width="14" height="9" rx="1.6"/><circle cx="4" cy="7" r=".55" fill="currentColor" stroke="none"/><circle cx="7" cy="7" r=".55" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r=".55" fill="currentColor" stroke="none"/><circle cx="13" cy="7" r=".55" fill="currentColor" stroke="none"/><rect x="4" y="9.4" width="8" height="1.3" rx=".6" fill="currentColor" stroke="none"/></svg>
+        <span>Atalhos</span>
+      </button>
+    </nav>
+
+    <div id="panelBody">
+      <!-- MAPAS -->
+      <section class="panel-view" data-view="mapas">
+        <input id="mapSearchInput" type="text" placeholder="Buscar mapa...">
+
+        <div class="panel-subtitle">MAPAS MENTAIS</div>
+
+        <div id="mapsList"></div>
+
+        <button id="newMapBtn" class="wide-button">+ Novo mapa mental</button>
+      </section>
+
+      <!-- TEMA -->
+      <section class="panel-view" data-view="tema" hidden>
+        <div id="themeList"></div>
+      </section>
+
+      <!-- LAYOUT -->
+      <section class="panel-view" data-view="layout" hidden>
+        <div class="panel-subtitle">LAYOUT</div>
+
+        <div id="layoutList"></div>
+      </section>
+
+      <!-- NÓS -->
+      <section class="panel-view" data-view="nos" hidden>
+        <div class="panel-subtitle">TIPOGRAFIA E ESPAÇAMENTO</div>
+
+        <div class="slider-row">
+          <div class="slider-label">
+            <span>Tamanho da fonte</span>
+            <span id="fontSizeValue" class="slider-value">14</span>
+          </div>
+          <input id="fontSizeSlider" type="range" min="10" max="22" step="1" value="14">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-label">
+            <span>Espessura das linhas</span>
+            <span id="lineThicknessValue" class="slider-value">1.4</span>
+          </div>
+          <input id="lineThicknessSlider" type="range" min="1" max="4" step=".2" value="1.4">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-label">
+            <span>Espaçamento entre nós</span>
+            <span id="spacingValue" class="slider-value">60</span>
+          </div>
+          <input id="spacingSlider" type="range" min="30" max="110" step="5" value="60">
+        </div>
+
+        <div class="panel-subtitle">FORMA DOS BLOCOS</div>
+
+        <div class="slider-row">
+          <div class="slider-label">
+            <span>Largura do bloco</span>
+            <span id="nodeWidthValue" class="slider-value">190</span>
+          </div>
+          <input id="nodeWidthSlider" type="range" min="130" max="280" step="10" value="190">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-label">
+            <span>Arredondamento das bordas</span>
+            <span id="nodeRadiusValue" class="slider-value">0</span>
+          </div>
+          <input id="nodeRadiusSlider" type="range" min="0" max="40" step="2" value="0">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-label">
+            <span>Transparência dos não selecionados</span>
+            <span id="dimmedOpacityValue" class="slider-value">90</span>
+          </div>
+          <input id="dimmedOpacitySlider" type="range" min="40" max="100" step="5" value="90">
+        </div>
+
+        <label class="toggle-row">
+          <span>Cantos decorativos</span>
+          <input id="showCornersToggle" type="checkbox" checked>
+          <span class="toggle-switch"></span>
+        </label>
+      </section>
+
+      <!-- ATALHOS -->
+      <section class="panel-view" data-view="atalhos" hidden>
+        <div class="panel-subtitle">ATALHOS DE TECLADO</div>
+
+        <div id="shortcutsList" class="shortcut-list"></div>
+
+        <button id="resetShortcutsBtn" class="wide-button">Restaurar atalhos padrão</button>
+      </section>
+    </div>
+
+    <div id="panelFooter">
+      <span id="panelVersion">v1.11</span>
+      <button id="panelHelpBtn" class="icon-button" title="Log de atualizações">?</button>
+    </div>
+  </aside>
+
+  <!-- =========================================================
+       ÁREA DO MAPA
+       ========================================================= -->
+  <main id="board">
+    <svg id="connections" aria-hidden="true"></svg>
+
+    <div id="canvas"></div>
+
+    <header id="mapHeader">
+      <button id="toggleMapsBtn" class="icon-button" title="Abrir/fechar configurações">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" stroke="none">
+          <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+        </svg>
+      </button>
+      <span id="currentMapTitle">Nenhum mapa</span>
+    </header>
+
+    <div id="toolbar">
+      <button id="addChildBtn" class="primary">+ Bloco</button>
+      <button id="deleteBtn">Excluir</button>
+    </div>
+
+    <div id="zoomControls">
+      <button id="zoomOutBtn" title="Afastar">−</button>
+      <span id="zoomValue">100%</span>
+      <button id="zoomInBtn" title="Aproximar">+</button>
+      <button id="resetZoomBtn" title="Resetar zoom">100%</button>
+    </div>
+  </main>
+
+  <!-- =========================================================
+       PAINEL DIREITO: ANOTAÇÃO
+       ========================================================= -->
+  <aside id="notesPanel">
+    <div id="notesHeader">
+      <div>
+        <div class="panel-label">ANOTAÇÃO</div>
+        <div id="notesTitle">Nenhum bloco selecionado</div>
+      </div>
+
+      <button id="toggleNotesBtn" class="icon-button" title="Fechar painel">×</button>
+    </div>
+
+    <div id="notesEmpty">
+      Selecione um bloco para escrever sobre ele.
+    </div>
+
+    <div id="notesBody" hidden>
+      <textarea id="note" placeholder="Escreva sobre este bloco..."></textarea>
+
+      <div class="notes-actions">
+        <button id="renameBtn">Renomear</button>
+        <button id="saveBtn">Salvar</button>
+      </div>
+    </div>
+  </aside>
+
+  <button id="openNotesFloatingBtn" class="floating-notes-button" title="Abrir anotações">✎</button>
+
+  <div id="status">Salvo</div>
+</div>
+
+<script src="js/core/state.js"></script>
+<script src="js/ui/dialog.js"></script>
+<script src="js/core/history.js"></script>
+<script src="js/storage/storage.js"></script>
+<script src="js/graph/geometry.js"></script>
+<script src="js/graph/connections.js"></script>
+<script src="js/graph/layout.js"></script>
+<script src="js/ui/maps.js"></script>
+<script src="js/ui/sidebar.js"></script>
+<script src="js/ui/nodes.js"></script>
+<script src="js/ui/toolbar.js"></script>
+<script src="js/ui/zoom.js"></script>
+<script src="js/ui/theme.js"></script>
+<script src="js/ui/node-style.js"></script>
+<script src="js/ui/panel.js"></script>
+<script src="js/ui/shortcuts.js"></script>
+<script src="js/ui/changelog.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

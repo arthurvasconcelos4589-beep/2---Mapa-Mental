@@ -1,0 +1,188 @@
+/* ============================================================
+   BLOCOS
+   ============================================================ */
+
+.node {
+  position: absolute;
+  z-index: 5;
+  width: var(--node-width, 190px);
+  min-height: 82px;
+  padding: 18px 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  border: 1px solid var(--node-border);
+  border-radius: var(--node-radius, 0px);
+  background: var(--node-bg);
+  color: var(--node-text);
+
+  cursor: grab;
+  user-select: none;
+  will-change: translate;
+
+  transform: translate(-50%, -50%);
+
+  transform-origin: center;
+  transition:
+    border-color .18s ease,
+    box-shadow .18s ease,
+    opacity .18s ease,
+    transform .18s ease,
+    background-color .2s ease,
+    color .2s ease,
+    width .15s ease,
+    border-radius .15s ease;
+}
+
+.node.large {
+  width: calc(var(--node-width, 190px) * 1.58);
+  min-height: 125px;
+  padding: 25px 30px;
+}
+
+.node::before,
+.node::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  opacity: var(--corners-opacity, 1);
+  transition: opacity .15s ease;
+}
+
+.node::before {
+  left: -5px;
+  top: -5px;
+  width: 30px;
+  height: 30px;
+  border-left: 1px solid var(--node-corner);
+  border-top: 1px solid var(--node-corner);
+}
+
+.node::after {
+  right: -5px;
+  bottom: -5px;
+  width: 30px;
+  height: 30px;
+  border-right: 1px solid var(--node-corner);
+  border-bottom: 1px solid var(--node-corner);
+}
+
+/*
+  Selecionado: efeito suave, sem escândalo.
+  Só um contorno mais claro e um brilho discreto.
+*/
+.node.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 10px var(--accent-soft);
+  transform: translate(-50%, -50%) scale(1.02);
+}
+
+/*
+  Os outros continuam bem visíveis:
+  perdem só 10% da cor e diminuem levemente de tamanho.
+*/
+.node.dimmed {
+  opacity: var(--node-dimmed-opacity, .9);
+  transform: translate(-50%, -50%) scale(.9);
+}
+
+.node.dragging {
+  cursor: grabbing;
+}
+
+.title {
+  text-align: center;
+  font-weight: 650;
+  letter-spacing: .24em;
+  font-size: var(--node-font-size, 14px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.large .title {
+  font-size: calc(var(--node-font-size, 14px) * 1.55);
+}
+
+.child-dot {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.floating-notes-button {
+  position: fixed;
+  z-index: 60;
+
+  /*
+    O botão começa exatamente na posição da barra direita.
+    Quando a barra fecha, o "right" muda para 15px e,
+    graças à transição, ele desliza até a parede em vez
+    de aparecer instantaneamente lá.
+  */
+  right: calc(var(--sidebar-right) + 12px);
+  bottom: 68px;
+
+  width: 36px;
+  height: 36px;
+  padding: 0;
+
+  display: grid;
+  place-items: center;
+
+  font-size: 16px;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition:
+    right .22s ease,
+    opacity .15s ease;
+}
+
+body.notes-closed .floating-notes-button {
+  right: 15px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ============================================================
+   TABLETS EM PAISAGEM
+   Mantém as mesmas funções e proporções do desktop, mas reduz
+   os blocos para que o mapa tenha espaço suficiente na tela.
+   Não há regras de responsividade para celulares.
+   ============================================================ */
+@media (min-width: 768px) and (max-width: 1199px) and (orientation: landscape) {
+  .node {
+    width: clamp(145px, 16vw, 170px);
+    min-height: clamp(64px, 7vw, 76px);
+    padding: clamp(11px, 1.3vw, 15px) clamp(14px, 1.6vw, 18px);
+  }
+
+  .node.large {
+    width: clamp(220px, 25vw, 270px);
+    min-height: clamp(96px, 10vw, 112px);
+    padding: clamp(16px, 1.8vw, 21px) clamp(19px, 2.2vw, 25px);
+  }
+
+  .title {
+    font-size: clamp(11px, 1.35vw, 13px);
+  }
+
+  .large .title {
+    font-size: clamp(15px, 2vw, 18px);
+  }
+
+  .node::before,
+  .node::after {
+    width: 24px;
+    height: 24px;
+  }
+}

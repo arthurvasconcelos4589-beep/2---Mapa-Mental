@@ -1,0 +1,26 @@
+/* ============================================================
+   TOOLBAR
+   ============================================================ */
+
+#toolbar {
+  position: absolute;
+  z-index: 30;
+  top: 18px;
+  left: calc(
+    50% +
+    (var(--sidebar-left-active, 0px) -
+     var(--sidebar-right-active, 0px)) / 2
+  );
+  transform: translateX(-50%);
+
+  display: flex;
+  gap: 7px;
+
+  padding: 8px;
+
+  border: 1px solid var(--border);
+  background: var(--panel);
+  backdrop-filter: blur(10px);
+  border-radius: 9px;
+  transition: left .22s ease;
+}

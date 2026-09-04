@@ -1,0 +1,216 @@
+/* ============================================================
+   TEMAS
+   Cada tema sobrescreve as variáveis definidas em base.css.
+   Trocar de tema é só trocar o atributo data-theme na <html>.
+
+   Escuros:  Dark Modern · Dracula · Ultron · Jarvis
+   Claros:   Light Modern · Creme com Marrom
+   ============================================================ */
+
+/*
+  DARK MODERN — o padrão atual da página: preto profundo
+  e neutro, com branco puro de destaque.
+*/
+html[data-theme="dark-modern"] {
+  --bg: #030303;
+  --panel: rgba(9, 9, 9, .96);
+  --text: #f5f5f5;
+  --muted: #666;
+  --border: #292929;
+
+  --node-bg: rgba(3, 3, 3, .96);
+  --node-border: #d8d8d8;
+  --node-text: #f5f5f5;
+  --node-corner: #fff;
+  --connection-color: rgba(255, 255, 255, .45);
+  --connection-color-extra: rgba(255, 255, 255, .3);
+
+  --accent: #ffffff;
+  --accent-soft: rgba(255, 255, 255, .22);
+  --accent-tint: rgba(255, 255, 255, .08);
+  --hover-tint: rgba(255, 255, 255, .05);
+  --tabs-bg: rgba(0, 0, 0, .5);
+
+  --btn-bg: #101010;
+  --btn-border: #444;
+  --btn-text: #eee;
+  --btn-bg-hover: #1a1a1a;
+  --btn-border-hover: #777;
+  --input-bg: #070707;
+
+  --grid-line: rgba(255, 255, 255, .05);
+  --board-glow: rgba(255, 255, 255, .025);
+}
+
+/*
+  DRACULA — a paleta clássica do tema VSCode.
+*/
+html[data-theme="dracula"] {
+  --bg: #282a36;
+  --panel: rgba(33, 34, 44, .97);
+  --text: #f8f8f2;
+  --muted: #8890b5;
+  --border: #44475a;
+
+  --node-bg: #343746;
+  --node-border: #6272a4;
+  --node-text: #f8f8f2;
+  --node-corner: #bd93f9;
+  --connection-color: rgba(189, 147, 249, .55);
+  --connection-color-extra: rgba(255, 121, 198, .4);
+
+  --accent: #bd93f9;
+  --accent-soft: rgba(189, 147, 249, .3);
+  --accent-tint: rgba(189, 147, 249, .14);
+  --hover-tint: rgba(255, 255, 255, .05);
+  --tabs-bg: rgba(20, 21, 28, .55);
+
+  --btn-bg: #343746;
+  --btn-border: #6272a4;
+  --btn-text: #f8f8f2;
+  --btn-bg-hover: #3e4257;
+  --btn-border-hover: #bd93f9;
+  --input-bg: #21222c;
+
+  --grid-line: rgba(189, 147, 249, .08);
+  --board-glow: rgba(189, 147, 249, .04);
+}
+
+/*
+  ULTRON — cinza metálico escuro com vermelho.
+*/
+html[data-theme="ultron"] {
+  --bg: #17181a;
+  --panel: rgba(26, 27, 30, .97);
+  --text: #e8e8ea;
+  --muted: #8a8b90;
+  --border: #3a3b3f;
+
+  --node-bg: #1f2023;
+  --node-border: #5a5b60;
+  --node-text: #e8e8ea;
+  --node-corner: #e0343f;
+  --connection-color: rgba(224, 52, 63, .55);
+  --connection-color-extra: rgba(224, 52, 63, .32);
+
+  --accent: #e0343f;
+  --accent-soft: rgba(224, 52, 63, .28);
+  --accent-tint: rgba(224, 52, 63, .14);
+  --hover-tint: rgba(255, 255, 255, .05);
+  --tabs-bg: rgba(10, 11, 12, .55);
+
+  --btn-bg: #232427;
+  --btn-border: #4a4b50;
+  --btn-text: #e8e8ea;
+  --btn-bg-hover: #2c2d31;
+  --btn-border-hover: #e0343f;
+  --input-bg: #141517;
+
+  --grid-line: rgba(224, 52, 63, .07);
+  --board-glow: rgba(224, 52, 63, .05);
+}
+
+/*
+  JARVIS — inspirado no HUD do Homem de Ferro: fundo
+  quase preto/azul-marinho profundo com ciano brilhante.
+*/
+html[data-theme="jarvis"] {
+  --bg: #030a10;
+  --panel: rgba(5, 14, 20, .97);
+  --text: #bfe9f7;
+  --muted: #4f7c8c;
+  --border: #0d2c38;
+
+  --node-bg: #041016;
+  --node-border: #12b8e0;
+  --node-text: #d8f4ff;
+  --node-corner: #2ee6ff;
+  --connection-color: rgba(46, 230, 255, .55);
+  --connection-color-extra: rgba(46, 230, 255, .32);
+
+  --accent: #2ee6ff;
+  --accent-soft: rgba(46, 230, 255, .28);
+  --accent-tint: rgba(46, 230, 255, .12);
+  --hover-tint: rgba(46, 230, 255, .07);
+  --tabs-bg: rgba(3, 10, 15, .55);
+
+  --btn-bg: #04141c;
+  --btn-border: #0f3646;
+  --btn-text: #bfe9f7;
+  --btn-bg-hover: #0a2530;
+  --btn-border-hover: #2ee6ff;
+  --input-bg: #020a0f;
+
+  --grid-line: rgba(46, 230, 255, .09);
+  --board-glow: rgba(46, 230, 255, .06);
+}
+
+/*
+  LIGHT MODERN — cinza claro, não branco puro, pensado
+  pra conforto visual em sessões longas.
+*/
+html[data-theme="light-modern"] {
+  --bg: #e9eaec;
+  --panel: rgba(240, 241, 243, .98);
+  --text: #202124;
+  --muted: #75767c;
+  --border: #d3d4d8;
+
+  --node-bg: #f5f6f7;
+  --node-border: #c3c4c9;
+  --node-text: #202124;
+  --node-corner: #202124;
+  --connection-color: rgba(32, 33, 36, .32);
+  --connection-color-extra: rgba(32, 33, 36, .18);
+
+  --accent: #4361c9;
+  --accent-soft: rgba(67, 97, 201, .18);
+  --accent-tint: rgba(67, 97, 201, .12);
+  --hover-tint: rgba(0, 0, 0, .045);
+  --tabs-bg: rgba(255, 255, 255, .5);
+
+  --btn-bg: #eef0f2;
+  --btn-border: #cfd1d6;
+  --btn-text: #202124;
+  --btn-bg-hover: #e3e5e8;
+  --btn-border-hover: #9a9ca3;
+  --input-bg: #ffffff;
+
+  --grid-line: rgba(0, 0, 0, .05);
+  --board-glow: rgba(67, 97, 201, .03);
+}
+
+/*
+  CREME COM MARRÃO — base creme aconchegante com
+  detalhes em marrom-café profundo.
+*/
+html[data-theme="creme"] {
+  --bg: #f2e9d8;
+  --panel: rgba(237, 226, 203, .97);
+  --text: #4a3323;
+  --muted: #8d7355;
+  --border: #d9c6a3;
+
+  --node-bg: #fff8ec;
+  --node-border: #b8955f;
+  --node-text: #4a3323;
+  --node-corner: #7a4b25;
+  --connection-color: rgba(122, 75, 37, .55);
+  --connection-color-extra: rgba(122, 75, 37, .32);
+
+  --accent: #7a4b25;
+  --accent-soft: rgba(122, 75, 37, .22);
+  --accent-tint: rgba(122, 75, 37, .14);
+  --hover-tint: rgba(74, 51, 35, .06);
+  --tabs-bg: rgba(255, 253, 240, .5);
+
+  --btn-bg: #ecdfc2;
+  --btn-border: #c7ab7c;
+  --btn-text: #4a3323;
+  --btn-bg-hover: #e2d2ab;
+  --btn-border-hover: #7a4b25;
+  --input-bg: #fffaf0;
+
+  --grid-line: rgba(122, 75, 37, .09);
+  --board-glow: rgba(122, 75, 37, .05);
+}

@@ -1,0 +1,197 @@
+/* ============================================================
+   DIÁLOGOS
+   ============================================================ */
+
+.dialog-overlay {
+  position: fixed;
+  z-index: 200;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0, 0, 0, .78);
+}
+
+.dialog-overlay[hidden] {
+  display: none;
+}
+
+.dialog-box {
+  width: 340px;
+  max-width: calc(100% - 40px);
+  max-height: calc(100vh - 60px);
+  padding: 22px;
+
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, .03),
+    0 20px 60px rgba(0, 0, 0, .6);
+}
+
+.dialog-message {
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-line;
+  margin-bottom: 16px;
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+.dialog-input {
+  width: 100%;
+  padding: 9px 10px;
+  margin-bottom: 18px;
+
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--input-bg);
+  color: var(--text);
+
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+.dialog-input:focus {
+  border-color: var(--btn-border-hover);
+  box-shadow: 0 0 0 1px var(--accent-soft);
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ============================================================
+   LOG DE ATUALIZAÇÕES
+   ============================================================ */
+
+.changelog-box {
+  width: 560px;
+  max-width: calc(100% - 40px);
+  height: 480px;
+  max-height: calc(100vh - 60px);
+
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, .03),
+    0 20px 60px rgba(0, 0, 0, .6);
+}
+
+.changelog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px 12px 20px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.changelog-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 14px;
+  padding: 16px;
+}
+
+.changelog-versions {
+  flex-shrink: 0;
+  width: 108px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.changelog-version-item {
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+  text-align: left;
+}
+
+.changelog-version-item:hover {
+  background: var(--hover-tint);
+  color: var(--text);
+}
+
+.changelog-version-item.active {
+  border-color: var(--accent);
+  background: var(--accent-tint);
+  color: var(--text);
+}
+
+.changelog-details {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding-left: 14px;
+  padding-right: 10px;
+  border-left: 1px solid var(--border);
+}
+
+.changelog-details-title {
+  margin-bottom: 12px;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.changelog-details-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+@media (max-width: 800px) {
+  .changelog-box {
+    width: 100%;
+  }
+
+  .changelog-body {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .changelog-versions {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .changelog-details {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+}
