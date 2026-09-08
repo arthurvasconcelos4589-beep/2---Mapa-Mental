@@ -31,7 +31,7 @@ function updateSidebar() {
   }
 
   title.textContent = node.title;
-  note.value = node.note || "";
+  note.innerHTML = node.note || "";
 
   empty.hidden = true;
   body.hidden = false;
@@ -50,11 +50,18 @@ function saveCurrentNote() {
   node.note =
     document.getElementById(
       "note"
-    ).value;
+    ).innerHTML;
 
   touchMapEdited();
   saveData(true);
 }
+
+/*
+  Salvamento automático: a anotação (texto e formatação)
+  salva sozinha a cada digitação — não existe mais um botão
+  de "Salvar" explícito, mas a função continua disponível
+  caso seja útil chamar de outro lugar.
+*/
 
 async function renameSelectedNode() {
   if (!AppState.selectedId) {

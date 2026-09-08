@@ -67,7 +67,9 @@ function renderNodesTab() {
     "spacingSlider",
     "nodeWidthSlider",
     "nodeRadiusSlider",
-    "dimmedOpacitySlider"
+    "dimmedOpacitySlider",
+    "wobbleIntensitySlider",
+    "wobbleSpeedSlider"
   ];
 
   const disabled = !map;
@@ -101,7 +103,11 @@ function renderNodesTab() {
     nodeRadiusSlider:
       map.nodeRadius ?? 0,
     dimmedOpacitySlider:
-      map.dimmedOpacity ?? 90
+      map.dimmedOpacity ?? 90,
+    wobbleIntensitySlider:
+      map.wobbleIntensity ?? 100,
+    wobbleSpeedSlider:
+      map.wobbleSpeed ?? 100
   };
 
   Object.entries(values).forEach(
@@ -205,6 +211,18 @@ function bindNodeStyleSliders() {
   bindSlider(
     "dimmedOpacitySlider",
     "dimmedOpacity",
+    { integer: true }
+  );
+
+  bindSlider(
+    "wobbleIntensitySlider",
+    "wobbleIntensity",
+    { integer: true }
+  );
+
+  bindSlider(
+    "wobbleSpeedSlider",
+    "wobbleSpeed",
     { integer: true }
   );
 

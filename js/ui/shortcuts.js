@@ -10,55 +10,78 @@ const SHORTCUT_DEFS = [
     id: "new-node",
     label: "Novo bloco",
     defaultKey: "n",
+    context: "global",
     run: () => createChild()
   },
   {
     id: "duplicate-node",
     label: "Duplicar bloco",
     defaultKey: "ctrl+d",
+    context: "global",
     run: () => duplicateSelectedNode()
   },
   {
     id: "delete-node",
     label: "Remover bloco",
     defaultKey: "delete",
+    context: "global",
     run: () => deleteSelectedNode()
   },
   {
     id: "rename-node",
     label: "Renomear",
     defaultKey: "f2",
+    context: "global",
     run: () => renameSelectedNode()
   },
   {
     id: "toggle-children",
     label: "Abrir/fechar filhos",
     defaultKey: "c",
+    context: "global",
     run: () => toggleSelectedChildren()
   },
   {
     id: "deselect",
     label: "Desselecionar",
     defaultKey: "escape",
+    context: "global",
     run: () => deselectAll()
   },
   {
     id: "center-view",
     label: "Centralizar",
     defaultKey: "space",
+    context: "global",
     run: () => centerView()
   },
   {
     id: "focus-search",
     label: "Buscar mapa",
     defaultKey: "ctrl+k",
+    context: "global",
     run: () => focusMapSearch()
   },
   {
     id: "toggle-grid",
     label: "Grade",
     defaultKey: "g",
+    context: "global",
     run: () => toggleGrid()
+  },
+  {
+    id: "note-indent",
+    label: "Indentar na anotação",
+    defaultKey: "tab",
+    context: "editor",
+    run: () => insertNoteIndent()
+  },
+  {
+    id: "clear-formatting",
+    label: "Limpar formatação",
+    defaultKey: "ctrl+\\",
+    context: "editor",
+    run: () => clearNoteFormatting()
   }
 ];
 
@@ -210,7 +233,9 @@ document.addEventListener(
       keyEventToString(event);
 
     const def = SHORTCUT_DEFS.find(
-      d => getEffectiveKey(d.id) === combo
+      d =>
+        d.context !== "editor" &&
+        getEffectiveKey(d.id) === combo
     );
 
     if (!def) return;
@@ -222,25 +247,31 @@ document.addEventListener(
 
 /* ---------- Aba Atalhos: exibir + remapear ---------- */
 
-function renderShortcutsTab() {
-  const list = document.getElementById(
-    "shortcutsList"
-  );
+function renderShortcutsGroup(
+  container,
+  label,
+  contextKey
+) {
+  const heading =
+    document.createElement("div");
 
-  if (!list) return;
+  heading.className = "panel-subtitle";
+  heading.textContent = label;
 
-  list.innerHTML = "";
+  container.appendChild(heading);
 
-  SHORTCUT_DEFS.forEach(def => {
+  SHORTCUT_DEFS.filter(
+    def => def.context === contextKey
+  ).forEach(def => {
     const row =
       document.createElement("div");
 
     row.className = "shortcut-row";
 
-    const label =
+    const rowLabel =
       document.createElement("span");
 
-    label.textContent = def.label;
+    rowLabel.textContent = def.label;
 
     const key =
       document.createElement("button");
@@ -258,11 +289,33 @@ function renderShortcutsTab() {
       () => startRemap(def.id, key)
     );
 
-    row.appendChild(label);
+    row.appendChild(rowLabel);
     row.appendChild(key);
 
-    list.appendChild(row);
+    container.appendChild(row);
   });
+}
+
+function renderShortcutsTab() {
+  const list = document.getElementById(
+    "shortcutsList"
+  );
+
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  renderShortcutsGroup(
+    list,
+    "GERAL",
+    "global"
+  );
+
+  renderShortcutsGroup(
+    list,
+    "EDITOR DE TEXTO",
+    "editor"
+  );
 }
 
 function startRemap(id, keyEl) {

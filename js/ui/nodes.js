@@ -140,6 +140,19 @@ function updatePositions() {
   const area =
     board.getBoundingClientRect();
 
+  /*
+    0% congela os blocos completamente (ficam parados
+    exatamente na posição salva); 100% é o padrão;
+    pode passar disso pra um efeito mais acentuado.
+  */
+  const wobbleScale =
+    (currentMap()?.wobbleIntensity ??
+      100) / 100;
+
+  const wobbleSpeedScale =
+    (currentMap()?.wobbleSpeed ??
+      100) / 100;
+
   visibleNodes().forEach(node => {
     const element =
       nodeElementCache.get(node.id);
@@ -147,13 +160,16 @@ function updatePositions() {
     if (!element) return;
 
     const ampX =
-      node.large ? 5 : 8;
+      (node.large ? 5 : 8) *
+      wobbleScale;
 
     const ampY =
-      node.large ? 4 : 7;
+      (node.large ? 4 : 7) *
+      wobbleScale;
 
     const speed =
-      node.speed || .55;
+      (node.speed || .55) *
+      wobbleSpeedScale;
 
     let x =
       node.x * area.width +
@@ -206,6 +222,37 @@ function updatePositions() {
   resolveVisibleOverlaps();
 }
 
+/*
+  Retorna a "caixa" de um bloco em coordenadas locais do
+  mapa (o mesmo espaço de node.x/node.y, independente do
+  zoom atual). offsetWidth/offsetHeight já são
+  zoom-independentes por natureza (refletem o layout, não
+  o visual pós-transform).
+*/
+function getLocalRect(element) {
+  const [x, y] = (
+    element.style.translate ||
+    "0px 0px"
+  )
+    .split(" ")
+    .map(v => parseFloat(v) || 0);
+
+  const halfW =
+    element.offsetWidth / 2;
+
+  const halfH =
+    element.offsetHeight / 2;
+
+  return {
+    left: x - halfW,
+    right: x + halfW,
+    top: y - halfH,
+    bottom: y + halfH,
+    cx: x,
+    cy: y
+  };
+}
+
 function resolveVisibleOverlaps() {
   const elements = [
     ...nodeElementCache.values()
@@ -219,6 +266,10 @@ function resolveVisibleOverlaps() {
     Mantém os blocos afastados.
     Não altera o ponto lógico salvo no mapa;
     é apenas uma correção visual.
+
+    Tudo aqui roda em coordenadas locais (não em pixels de
+    tela), então o resultado é o mesmo não importa o quão
+    afastado ou aproximado esteja o zoom.
   */
   for (
     let pass = 0;
@@ -235,13 +286,13 @@ function resolveVisibleOverlaps() {
         j < elements.length;
         j++
       ) {
-        const a =
+        const a = getLocalRect(
           elements[i]
-            .getBoundingClientRect();
+        );
 
-        const b =
+        const b = getLocalRect(
           elements[j]
-            .getBoundingClientRect();
+        );
 
         const gap =
           18 *
@@ -274,23 +325,11 @@ function resolveVisibleOverlaps() {
           overlapX > -gap &&
           overlapY > -gap
         ) {
-          const acx =
-            a.left + a.width / 2;
-
-          const acy =
-            a.top + a.height / 2;
-
-          const bcx =
-            b.left + b.width / 2;
-
-          const bcy =
-            b.top + b.height / 2;
-
           const pushX =
-            acx <= bcx ? -1 : 1;
+            a.cx <= b.cx ? -1 : 1;
 
           const pushY =
-            acy <= bcy ? -1 : 1;
+            a.cy <= b.cy ? -1 : 1;
 
           if (
             overlapX < overlapY
@@ -339,16 +378,10 @@ function moveElement(
   dy
 ) {
   /*
-    dx/dy chegam em pixels de tela (pós-zoom do #canvas).
-    A posição do bloco vive no espaço lógico (pré-zoom),
-    então convertemos pela escala atual do mapa.
+    dx/dy agora já chegam em unidades locais (o mesmo
+    espaço de node.x/node.y) — sem nenhuma conversão de
+    zoom, então não tem como "explodir" em zooms extremos.
   */
-  const zoom =
-    currentMap()?.zoom || 1;
-
-  dx /= zoom;
-  dy /= zoom;
-
   const [
     currentLeft,
     currentTop
@@ -642,6 +675,21 @@ async function createSibling() {
 }
 
 async function deleteSelectedNode() {
+  try {
+    await deleteSelectedNodeInner();
+  } catch (error) {
+    console.error(
+      "Falha ao excluir bloco:",
+      error
+    );
+
+    await showAlert(
+      "Não foi possível excluir o bloco. Veja o console (F12) para detalhes."
+    );
+  }
+}
+
+async function deleteSelectedNodeInner() {
   if (!AppState.selectedId) {
     await showAlert(
       "Selecione um bloco para excluir."

@@ -50,6 +50,13 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: color .15s ease;
+}
+
+#notesTitle:hover {
+  color: var(--accent);
 }
 
 #notesEmpty {
@@ -67,11 +74,94 @@
   flex-direction: column;
 }
 
-#note {
+/* ---------- Barra de ferramentas da anotação ---------- */
+
+#noteToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-bottom: 10px;
+}
+
+.note-tool {
+  width: 27px;
+  height: 27px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  border-radius: 5px;
+  line-height: 1;
+}
+
+.note-tool b,
+.note-tool i,
+.note-tool u {
+  font-size: 12px;
+}
+
+.note-tool.active {
+  border-color: var(--accent);
+  background: var(--accent-tint);
+  color: var(--accent);
+}
+
+.note-tool-divider {
+  width: 1px;
+  height: 17px;
+  background: var(--border);
+  margin: 0 3px;
+}
+
+.note-color-picker {
+  position: relative;
+}
+
+.note-color-swatch {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--text);
+}
+
+.note-color-popover {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 6px);
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 9px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .45);
+}
+
+.note-color-option {
+  width: 19px;
+  height: 19px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(128, 128, 128, .35);
+}
+
+.note-color-option:hover {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* ---------- A área de escrita em si ---------- */
+
+#note.note-editor {
   width: 100%;
   min-height: 0;
   height: 100%;
-  resize: none;
+  overflow-y: auto;
 
   background: var(--input-bg);
   color: var(--text);
@@ -81,21 +171,59 @@
   outline: none;
   padding: 12px;
 
-  font-size: 13px;
-  line-height: 1.6;
+  /*
+    Fonte monoespaçada: negrito, itálico e cor não mudam
+    a largura dos caracteres, então tudo continua alinhado
+    em colunas e linhas, como num editor de código.
+  */
+  font-family:
+    ui-monospace,
+    "Cascadia Code",
+    "Fira Code",
+    "JetBrains Mono",
+    Consolas,
+    "Courier New",
+    monospace;
+  font-size: 12.5px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
-#note:focus {
+#note.note-editor:focus {
   border-color: var(--btn-border-hover);
   box-shadow: 0 0 0 1px var(--accent-soft);
 }
 
-.notes-actions {
-  display: flex;
-  gap: 7px;
-  padding-top: 11px;
+#note.note-editor:empty::before {
+  content: attr(data-placeholder);
+  color: var(--muted);
+  pointer-events: none;
 }
 
-.notes-actions button {
-  flex: 1;
+/*
+  Bloco de destaque em markdown, no estilo de bloco de
+  código dos chats de IA: fundo diferenciado com borda
+  fina ao redor, sem "risquinho" lateral. Ocupa só uma
+  linha até o texto quebrar naturalmente ou o usuário
+  apertar Enter dentro dele.
+*/
+.note-block {
+  background: var(--btn-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 10px;
+  margin: 5px 0;
+  min-height: 1.2em;
+}
+
+/*
+  Código em linha: só o trecho selecionado ganha destaque,
+  sem ocupar a linha inteira.
+*/
+.note-inline-code,
+code.note-inline-code {
+  background: var(--btn-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
 }

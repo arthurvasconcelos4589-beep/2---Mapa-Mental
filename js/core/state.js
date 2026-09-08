@@ -57,6 +57,8 @@ const AppState = {
       nodeRadius: 0,
       dimmedOpacity: 90,
       showCorners: true,
+      wobbleIntensity: 100,
+      wobbleSpeed: 100,
 
       createdAt: Date.now(),
       lastEditedAt: Date.now(),

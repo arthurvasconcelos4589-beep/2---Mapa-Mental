@@ -123,14 +123,7 @@ document
   );
 
 document
-  .getElementById("saveBtn")
-  .addEventListener(
-    "click",
-    saveCurrentNote
-  );
-
-document
-  .getElementById("renameBtn")
+  .getElementById("notesTitle")
   .addEventListener(
     "click",
     renameSelectedNode
@@ -155,7 +148,7 @@ document
       node.note =
         document.getElementById(
           "note"
-        ).value;
+        ).innerHTML;
 
       /*
         Salvamento automático.
@@ -313,6 +306,7 @@ updateSidebarWidthVars();
 bindPanelTabs();
 bindNodeStyleSliders();
 bindShortcutsTab();
+bindNoteToolbar();
 
 document.getElementById(
   "panelVersion"

@@ -2,9 +2,39 @@
    LOG DE ATUALIZAÇÕES
    ============================================================ */
 
-const APP_VERSION = "v1.14";
+const APP_VERSION = "v2.02";
 
 const UPDATE_LOG = [
+  {
+    version: "v2.02",
+    changes: [
+      "Corrigido bug grave: afastar muito o zoom espalhava e quebrava os blocos e as linhas. A causa era o sistema que afasta blocos sobrepostos, que amplificava demais a correção em zooms bem baixos — agora ele roda em coordenadas independentes de zoom",
+      "Nova seção \"Movimento\" na aba Nós: intensidade do balanço dos blocos (0 = totalmente parado) e velocidade separadamente"
+    ]
+  },
+  {
+    version: "v2.01",
+    changes: [
+      "Botões da barra de anotação agora centralizados, sem espaço sobrando do lado",
+      "Botão de limpar formatação saiu da barra e virou atalho de teclado (Ctrl+\\, remapeável na aba Atalhos)",
+      "Botões de Renomear e Salvar removidos — clique no nome do bloco (dentro da anotação) pra renomear, e tudo salva sozinho",
+      "Bloco de destaque redesenhado: sem a linha lateral que não combinava, agora com borda fina ao redor tipo bloco de código de chat de IA, ocupando só uma linha até quebrar naturalmente"
+    ]
+  },
+  {
+    version: "v1.2",
+    changes: [
+      "Editor de anotações totalmente novo: negrito, itálico, sublinhado e código em linha",
+      "Cor de texto com paleta própria por tema (Dracula usa as cores de sintaxe do VSCode, Jarvis usa tons de azul/ciano, e assim por diante)",
+      "Bloco de destaque estilo markdown — se a linha estiver vazia ele entra ali, senão pula pra uma linha nova",
+      "Fonte monoespaçada na anotação: tudo continua alinhado em colunas e linhas mesmo com formatação",
+      "Toolbar de anotação pequena e limpa, no mesmo estilo da aba de configurações",
+      "Tudo que é escrito ou formatado na anotação salva automaticamente",
+      "Tab agora indenta (3 espaços) dentro da anotação em vez de sair do campo — e isso é remapeável na aba Atalhos, numa seção nova só do editor",
+      "Sugestões e sublinhado de correção ortográfica desativados nos campos de texto do app",
+      "Botão de excluir bloco blindado com tratamento de erro, pra nunca falhar em silêncio"
+    ]
+  },
   {
     version: "v1.14",
     changes: [

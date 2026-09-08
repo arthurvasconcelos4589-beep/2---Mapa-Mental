@@ -19,7 +19,7 @@ function buildDialogRoot() {
   overlay.innerHTML = `
     <div class="dialog-box" role="dialog" aria-modal="true">
       <div class="dialog-message" id="dialogMessage"></div>
-      <input class="dialog-input" id="dialogInput" hidden />
+      <input class="dialog-input" id="dialogInput" spellcheck="false" hidden />
       <div class="dialog-actions">
         <button id="dialogCancelBtn" hidden>Cancelar</button>
         <button class="primary" id="dialogOkBtn">OK</button>
