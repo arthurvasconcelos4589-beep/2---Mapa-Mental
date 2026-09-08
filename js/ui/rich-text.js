@@ -189,14 +189,61 @@ function insertNoteBlock() {
   triggerNoteSave();
 }
 
-function applyNoteColor(color) {
-  execNoteCommand("foreColor", color);
+/*
+  Aplica a cor pelo ÍNDICE na paleta (não pelo valor
+  hexadecimal). Assim, se o tema mudar depois, o texto
+  automaticamente passa a usar a cor que estiver naquela
+  mesma posição na paleta do novo tema — a variável CSS é
+  quem resolve isso, não precisa reprocessar o texto.
+*/
+function applyNoteColor(index) {
+  const editor = getNoteEditor();
+
+  editor.focus();
+
+  const selection =
+    window.getSelection();
+
+  if (
+    !selection.rangeCount ||
+    selection.isCollapsed
+  ) {
+    closeNoteColorPopover();
+    return;
+  }
+
+  const range =
+    selection.getRangeAt(0);
+
+  const span =
+    document.createElement("span");
+
+  span.className =
+    `note-color-${index}`;
+
+  try {
+    range.surroundContents(span);
+  } catch (error) {
+    /*
+      Seleção cruza mais de um elemento — move o conteúdo
+      pro span em vez de "envolver" a range diretamente.
+    */
+    const fragment =
+      range.extractContents();
+
+    span.appendChild(fragment);
+    range.insertNode(span);
+  }
+
+  selection.removeAllRanges();
 
   document.getElementById(
     "noteColorSwatch"
-  ).style.background = color;
+  ).style.background =
+    `var(--note-color-${index})`;
 
   closeNoteColorPopover();
+  triggerNoteSave();
 }
 
 function renderNoteColorPopover() {
@@ -208,7 +255,7 @@ function renderNoteColorPopover() {
   popover.innerHTML = "";
 
   getThemeColorPalette().forEach(
-    color => {
+    (color, index) => {
       const swatch =
         document.createElement(
           "button"
@@ -224,7 +271,7 @@ function renderNoteColorPopover() {
         "click",
         event => {
           event.stopPropagation();
-          applyNoteColor(color);
+          applyNoteColor(index);
         }
       );
 
@@ -293,6 +340,160 @@ function insertNoteIndent() {
   triggerNoteSave();
 }
 
+/*
+  Fechamento automático de pares, tipo VSCode: abrir um
+  ( { [ " ' ` já insere o par e deixa o cursor no meio.
+*/
+const NOTE_AUTO_PAIRS = {
+  "(": ")",
+  "{": "}",
+  "[": "]",
+  '"': '"',
+  "'": "'",
+  "`": "`"
+};
+
+const NOTE_AUTO_CLOSERS = Object.values(
+  NOTE_AUTO_PAIRS
+);
+
+function handleNoteTypeOverClosing(
+  event
+) {
+  if (
+    !NOTE_AUTO_CLOSERS.includes(
+      event.key
+    )
+  ) {
+    return false;
+  }
+
+  const selection =
+    window.getSelection();
+
+  if (
+    !selection ||
+    !selection.isCollapsed ||
+    !selection.rangeCount
+  ) {
+    return false;
+  }
+
+  const range =
+    selection.getRangeAt(0);
+
+  const container =
+    range.startContainer;
+
+  const offset = range.startOffset;
+
+  if (
+    container.nodeType ===
+      Node.TEXT_NODE &&
+    container.textContent[
+      offset
+    ] === event.key
+  ) {
+    /*
+      O próximo caractere já é o fechamento que acabamos
+      de digitar (provavelmente o que auto-completamos) —
+      só pula por cima em vez de duplicar.
+    */
+    event.preventDefault();
+
+    range.setStart(
+      container,
+      offset + 1
+    );
+
+    range.collapse(true);
+
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    return true;
+  }
+
+  return false;
+}
+
+function handleNoteAutoPair(event) {
+  const closing =
+    NOTE_AUTO_PAIRS[event.key];
+
+  if (!closing) return false;
+
+  event.preventDefault();
+
+  const selection =
+    window.getSelection();
+
+  if (
+    selection &&
+    !selection.isCollapsed &&
+    selection.rangeCount
+  ) {
+    /*
+      Tem texto selecionado: envolve a seleção com o par,
+      em vez de substituir.
+    */
+    const text = selection
+      .getRangeAt(0)
+      .toString();
+
+    document.execCommand(
+      "insertText",
+      false,
+      event.key + text + closing
+    );
+  } else {
+    document.execCommand(
+      "insertText",
+      false,
+      event.key + closing
+    );
+
+    const sel =
+      window.getSelection();
+
+    if (sel.rangeCount) {
+      const range =
+        sel.getRangeAt(0);
+
+      range.setStart(
+        range.startContainer,
+        range.startOffset - 1
+      );
+
+      range.collapse(true);
+
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  }
+
+  triggerNoteSave();
+  return true;
+}
+
+function handleNoteAutoPairsKeydown(
+  event
+) {
+  if (
+    event.ctrlKey ||
+    event.metaKey ||
+    event.altKey
+  ) {
+    return;
+  }
+
+  if (handleNoteTypeOverClosing(event)) {
+    return;
+  }
+
+  handleNoteAutoPair(event);
+}
+
 function bindNoteToolbar() {
   document
     .getElementById("noteBoldBtn")
@@ -328,6 +529,26 @@ function bindNoteToolbar() {
     .addEventListener(
       "click",
       insertNoteBlock
+    );
+
+  document
+    .getElementById(
+      "noteOrderedListBtn"
+    )
+    .addEventListener("click", () =>
+      execNoteCommand(
+        "insertOrderedList"
+      )
+    );
+
+  document
+    .getElementById(
+      "noteUnorderedListBtn"
+    )
+    .addEventListener("click", () =>
+      execNoteCommand(
+        "insertUnorderedList"
+      )
     );
 
   document
@@ -370,6 +591,16 @@ function bindNoteToolbar() {
   editor.addEventListener(
     "mouseup",
     updateNoteToolbarState
+  );
+
+  /*
+    Fechamento automático de pares — checa antes dos
+    atalhos, já que não há sobreposição de teclas entre
+    os dois sistemas.
+  */
+  editor.addEventListener(
+    "keydown",
+    handleNoteAutoPairsKeydown
   );
 
   /*

@@ -579,6 +579,105 @@ function handlePointerUp() {
   saveData(false);
 }
 
+/*
+  Criação inteligente: em vez de posicionar o bloco novo
+  automaticamente, entra num modo de "clique pra
+  posicionar" — o próximo clique no board é onde ele nasce.
+*/
+let pendingNodeCreation = null;
+
+function startNodePlacement(parentId) {
+  pendingNodeCreation = { parentId };
+
+  document
+    .getElementById("board")
+    .classList.add("placing-node");
+
+  document.getElementById(
+    "placementHint"
+  ).hidden = false;
+}
+
+function cancelNodePlacement() {
+  if (!pendingNodeCreation) return;
+
+  pendingNodeCreation = null;
+
+  document
+    .getElementById("board")
+    .classList.remove(
+      "placing-node"
+    );
+
+  document.getElementById(
+    "placementHint"
+  ).hidden = true;
+}
+
+function placePendingNodeAt(
+  clientX,
+  clientY
+) {
+  const map = currentMap();
+
+  if (!map || !pendingNodeCreation) {
+    return;
+  }
+
+  const { parentId } =
+    pendingNodeCreation;
+
+  const board =
+    document
+      .getElementById("board")
+      .getBoundingClientRect();
+
+  const zoom = map.zoom || 1;
+  const panX = map.panX || 0;
+  const panY = map.panY || 0;
+
+  /*
+    Converte o ponto clicado (tela) pra coordenada local
+    do canvas (antes do zoom/pan), e depois pra fração
+    0..1 usada por node.x/node.y.
+  */
+  const localX =
+    (clientX - board.left - panX) /
+    zoom;
+
+  const localY =
+    (clientY - board.top - panY) /
+    zoom;
+
+  pushHistory();
+
+  const child = createNodeData(
+    parentId,
+    "NOVO BLOCO",
+    false
+  );
+
+  child.x = localX / board.width;
+  child.y = localY / board.height;
+
+  map.nodes.push(child);
+
+  const parent =
+    getNode(parentId);
+
+  if (parent) {
+    parent.childrenOpen = true;
+  }
+
+  AppState.selectedId = child.id;
+
+  cancelNodePlacement();
+
+  touchMapEdited();
+  render();
+  saveData();
+}
+
 async function createChild() {
   const parentId =
     AppState.selectedId;
@@ -590,36 +689,7 @@ async function createChild() {
     return;
   }
 
-  const map = currentMap();
-
-  if (!map) return;
-
-  pushHistory();
-
-  const child =
-    createNodeData(
-      parentId,
-      "NOVO BLOCO",
-      false
-    );
-
-  map.nodes.push(child);
-
-  /*
-    Criou filho -> o pai é aberto
-    para que o novo bloco apareça.
-  */
-  const parent =
-    getNode(parentId);
-
-  parent.childrenOpen = true;
-
-  AppState.selectedId =
-    child.id;
-
-  touchMapEdited();
-  render();
-  saveData();
+  startNodePlacement(parentId);
 }
 
 /*
@@ -847,6 +917,11 @@ function toggleSelectedChildren() {
   Esc: desseleciona o bloco atual.
 */
 function deselectAll() {
+  if (pendingNodeCreation) {
+    cancelNodePlacement();
+    return;
+  }
+
   AppState.selectedId = null;
 
   render();

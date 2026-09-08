@@ -71,6 +71,8 @@
         <div id="mapsList"></div>
 
         <button id="newMapBtn" class="wide-button">+ Novo mapa mental</button>
+        <button id="exportMapBtn" class="wide-button">Exportar mapa atual</button>
+        <button id="importMapBtn" class="wide-button">Importar mapa (.md)</button>
       </section>
 
       <!-- TEMA -->
@@ -83,6 +85,12 @@
         <div class="panel-subtitle">LAYOUT</div>
 
         <div id="layoutList"></div>
+
+        <label class="toggle-row">
+          <span>Numerar conexões</span>
+          <input id="showOrderNumbersToggle" type="checkbox">
+          <span class="toggle-switch"></span>
+        </label>
       </section>
 
       <!-- NÓS -->
@@ -143,7 +151,7 @@
 
         <div class="slider-row">
           <div class="slider-label">
-            <span>Intensidade do movimento (0 = parado)</span>
+            <span>Intensidade do movimento</span>
             <span id="wobbleIntensityValue" class="slider-value">100</span>
           </div>
           <input id="wobbleIntensitySlider" type="range" min="0" max="150" step="10" value="100">
@@ -175,7 +183,7 @@
     </div>
 
     <div id="panelFooter">
-      <span id="panelVersion">v1.11</span>
+      <span id="panelVersion">v2.1</span>
       <button id="panelHelpBtn" class="icon-button" title="Log de atualizações">?</button>
     </div>
   </aside>
@@ -199,8 +207,12 @@
 
     <div id="toolbar">
       <button id="addChildBtn" class="primary">+ Bloco</button>
+      <button id="exportBlockBtn" title="Exportar bloco selecionado">Exportar</button>
+      <button id="importBlockBtn" title="Importar dentro do bloco selecionado">Importar</button>
       <button id="deleteBtn">Excluir</button>
     </div>
+
+    <div id="placementHint" hidden>Clique onde quer criar o bloco · Esc cancela</div>
 
     <div id="zoomControls">
       <button id="zoomOutBtn" title="Afastar">−</button>
@@ -244,6 +256,11 @@
         </div>
 
         <button type="button" id="noteBlockBtn" class="note-tool" title="Bloco de destaque">▤</button>
+
+        <span class="note-tool-divider"></span>
+
+        <button type="button" id="noteOrderedListBtn" class="note-tool" title="Lista ordenada">1.</button>
+        <button type="button" id="noteUnorderedListBtn" class="note-tool" title="Lista não ordenada">•</button>
       </div>
 
       <div
@@ -280,6 +297,7 @@
 <script src="js/ui/panel.js"></script>
 <script src="js/ui/shortcuts.js"></script>
 <script src="js/ui/rich-text.js"></script>
+<script src="js/ui/import-export.js"></script>
 <script src="js/ui/changelog.js"></script>
 <script src="js/app.js"></script>
 </body>

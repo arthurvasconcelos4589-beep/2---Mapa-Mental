@@ -9,7 +9,7 @@
   --muted: #666;
   --border: #292929;
   --sidebar-left: 258px;
-  --sidebar-right: 330px;
+  --sidebar-right: 370px;
   --sidebar-left-active: var(--sidebar-left);
   --sidebar-right-active: var(--sidebar-right);
   --neon: #fff;
@@ -42,6 +42,16 @@
   /* Grade de fundo e brilho do board */
   --grid-line: rgba(255, 255, 255, .05);
   --board-glow: rgba(255, 255, 255, .025);
+
+  /* Paleta de cores do editor de anotações */
+  --note-color-0: #f5f5f5;
+  --note-color-1: #ff6b6b;
+  --note-color-2: #ffa94d;
+  --note-color-3: #ffd43b;
+  --note-color-4: #69db7c;
+  --note-color-5: #66d9e8;
+  --note-color-6: #74c0fc;
+  --note-color-7: #b197fc;
 }
 
 * {

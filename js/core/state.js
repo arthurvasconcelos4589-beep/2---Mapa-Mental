@@ -59,6 +59,7 @@ const AppState = {
       showCorners: true,
       wobbleIntensity: 100,
       wobbleSpeed: 100,
+      showOrderNumbers: false,
 
       createdAt: Date.now(),
       lastEditedAt: Date.now(),

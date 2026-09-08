@@ -47,6 +47,19 @@ function buildChildrenMap(map) {
     childrenMap.get(node.parentId).push(node);
   });
 
+  /*
+    Ordena cada grupo de irmãos pelo número de ordem, então
+    Radial e Árvore H/V organizam os blocos seguindo essa
+    sequência (útil pra ensinar passo a passo, por exemplo).
+  */
+  childrenMap.forEach(list => {
+    list.sort(
+      (a, b) =>
+        (a.order ?? 0) -
+        (b.order ?? 0)
+    );
+  });
+
   return childrenMap;
 }
 
@@ -272,4 +285,40 @@ function renderLayoutTab() {
 
     list.appendChild(row);
   });
+
+  const orderToggle =
+    document.getElementById(
+      "showOrderNumbersToggle"
+    );
+
+  if (orderToggle) {
+    orderToggle.disabled = !map;
+    orderToggle.checked = !!(
+      map && map.showOrderNumbers
+    );
+  }
+}
+
+function bindLayoutToggle() {
+  const orderToggle =
+    document.getElementById(
+      "showOrderNumbersToggle"
+    );
+
+  if (!orderToggle) return;
+
+  orderToggle.addEventListener(
+    "change",
+    () => {
+      const map = currentMap();
+
+      if (!map) return;
+
+      map.showOrderNumbers =
+        orderToggle.checked;
+
+      touchMapEdited();
+      saveData(false);
+    }
+  );
 }

@@ -292,6 +292,7 @@ function createNodeData(
 
   let x = .5;
   let y = .5;
+  let order = 0;
 
   if (parent) {
     const siblings =
@@ -299,6 +300,8 @@ function createNodeData(
 
     const index =
       siblings.length;
+
+    order = index;
 
     /*
       Posição inicial em torno do pai.
@@ -340,6 +343,13 @@ function createNodeData(
     note: "",
 
     large,
+
+    /*
+      Número de ordem entre os irmãos — aparece na linha
+      de conexão quando ativado, e os layouts (Radial,
+      Árvore H/V) organizam os blocos seguindo essa ordem.
+    */
+    order,
 
     phase:
       Math.random() *

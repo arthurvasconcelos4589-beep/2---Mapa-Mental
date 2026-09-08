@@ -74,6 +74,20 @@ document
   );
 
 document
+  .getElementById("exportMapBtn")
+  .addEventListener(
+    "click",
+    exportCurrentMap
+  );
+
+document
+  .getElementById("importMapBtn")
+  .addEventListener(
+    "click",
+    importMap
+  );
+
+document
   .getElementById("mapSearchInput")
   .addEventListener(
     "input",
@@ -305,6 +319,7 @@ loadShortcutOverrides();
 updateSidebarWidthVars();
 bindPanelTabs();
 bindNodeStyleSliders();
+bindLayoutToggle();
 bindShortcutsTab();
 bindNoteToolbar();
 

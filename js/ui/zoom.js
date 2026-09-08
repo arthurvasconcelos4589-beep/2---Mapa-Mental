@@ -232,6 +232,18 @@ function onBoardPointerDown(event) {
     return;
   }
 
+  /*
+    Modo de posicionamento: este clique decide onde o
+    bloco novo nasce, em vez de começar a arrastar a tela.
+  */
+  if (pendingNodeCreation) {
+    placePendingNodeAt(
+      event.clientX,
+      event.clientY
+    );
+    return;
+  }
+
   const map = currentMap();
 
   if (!map) return;

@@ -40,6 +40,16 @@ html[data-theme="dark-modern"] {
 
   --grid-line: rgba(255, 255, 255, .05);
   --board-glow: rgba(255, 255, 255, .025);
+  /* Paleta de cores do editor de anotações */
+  --note-color-0: #f5f5f5;
+  --note-color-1: #ff6b6b;
+  --note-color-2: #ffa94d;
+  --note-color-3: #ffd43b;
+  --note-color-4: #69db7c;
+  --note-color-5: #66d9e8;
+  --note-color-6: #74c0fc;
+  --note-color-7: #b197fc;
+
 }
 
 /*
@@ -74,6 +84,16 @@ html[data-theme="dracula"] {
 
   --grid-line: rgba(189, 147, 249, .08);
   --board-glow: rgba(189, 147, 249, .04);
+  /* Paleta de cores do editor de anotações */
+  --note-color-0: #f8f8f2;
+  --note-color-1: #ff79c6;
+  --note-color-2: #bd93f9;
+  --note-color-3: #8be9fd;
+  --note-color-4: #50fa7b;
+  --note-color-5: #ffb86c;
+  --note-color-6: #ff5555;
+  --note-color-7: #f1fa8c;
+
 }
 
 /*
@@ -108,6 +128,16 @@ html[data-theme="ultron"] {
 
   --grid-line: rgba(224, 52, 63, .07);
   --board-glow: rgba(224, 52, 63, .05);
+  /* Paleta de cores do editor de anotações */
+  --note-color-0: #e8e8ea;
+  --note-color-1: #ff6b6b;
+  --note-color-2: #e0343f;
+  --note-color-3: #ff9f43;
+  --note-color-4: #c4c5ca;
+  --note-color-5: #8a8b90;
+  --note-color-6: #d4af37;
+  --note-color-7: #b7202b;
+
 }
 
 /*
@@ -143,6 +173,16 @@ html[data-theme="jarvis"] {
 
   --grid-line: rgba(46, 230, 255, .09);
   --board-glow: rgba(46, 230, 255, .06);
+  /* Paleta de cores do editor de anotações */
+  --note-color-0: #d8f4ff;
+  --note-color-1: #2ee6ff;
+  --note-color-2: #7fd4f0;
+  --note-color-3: #4fa8d8;
+  --note-color-4: #34d1a1;
+  --note-color-5: #ffb347;
+  --note-color-6: #ff5f5f;
+  --note-color-7: #bfe9f7;
+
 }
 
 /*
@@ -178,6 +218,16 @@ html[data-theme="light-modern"] {
 
   --grid-line: rgba(0, 0, 0, .05);
   --board-glow: rgba(67, 97, 201, .03);
+  /* Paleta de cores do editor de anotações */
+  --note-color-0: #202124;
+  --note-color-1: #1d3a8f;
+  --note-color-2: #0f766e;
+  --note-color-3: #15803d;
+  --note-color-4: #92600b;
+  --note-color-5: #b91c1c;
+  --note-color-6: #6d28d9;
+  --note-color-7: #334155;
+
 }
 
 /*
@@ -213,4 +263,14 @@ html[data-theme="creme"] {
 
   --grid-line: rgba(122, 75, 37, .09);
   --board-glow: rgba(122, 75, 37, .05);
+  /* Paleta de cores do editor de anotações */
+  --note-color-0: #4a3323;
+  --note-color-1: #b5533c;
+  --note-color-2: #a97d1f;
+  --note-color-3: #3f6b3f;
+  --note-color-4: #6b3f5e;
+  --note-color-5: #2d4a6b;
+  --note-color-6: #7a4b25;
+  --note-color-7: #8d7355;
+
 }

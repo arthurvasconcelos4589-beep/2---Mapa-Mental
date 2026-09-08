@@ -195,6 +195,16 @@
   box-shadow: 0 0 0 1px var(--accent-soft);
 }
 
+#note.note-editor ul,
+#note.note-editor ol {
+  margin: 4px 0;
+  padding-left: 26px;
+}
+
+#note.note-editor li {
+  margin: 2px 0;
+}
+
 #note.note-editor:empty::before {
   content: attr(data-placeholder);
   color: var(--muted);
@@ -227,3 +237,18 @@ code.note-inline-code {
   padding: 1px 5px;
   border-radius: 3px;
 }
+
+/*
+  Cores por ÍNDICE na paleta, não por valor fixo — usam a
+  variável CSS do tema atual, então se o tema mudar, o
+  texto já colorido acompanha automaticamente a cor que
+  estiver naquela mesma posição na nova paleta.
+*/
+.note-color-0 { color: var(--note-color-0); }
+.note-color-1 { color: var(--note-color-1); }
+.note-color-2 { color: var(--note-color-2); }
+.note-color-3 { color: var(--note-color-3); }
+.note-color-4 { color: var(--note-color-4); }
+.note-color-5 { color: var(--note-color-5); }
+.note-color-6 { color: var(--note-color-6); }
+.note-color-7 { color: var(--note-color-7); }

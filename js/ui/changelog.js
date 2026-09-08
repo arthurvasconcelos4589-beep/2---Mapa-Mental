@@ -2,9 +2,38 @@
    LOG DE ATUALIZAÇÕES
    ============================================================ */
 
-const APP_VERSION = "v2.02";
+const APP_VERSION = "v2.1";
 
 const UPDATE_LOG = [
+  {
+    version: "v2.1",
+    changes: [
+      "Números de ordem nas conexões: ative em Layout > \"Numerar conexões\", clique no número pra trocar. Os layouts Radial e Árvore H/V agora organizam os blocos seguindo essa sequência — ótimo pra ensinar passo a passo",
+      "Área de anotações 40px mais larga",
+      "Novos botões de lista ordenada e não ordenada na barra de anotação",
+      "Fechamento automático de pares tipo VSCode: abrir ( { [ \" ' ` já completa o par e deixa o cursor no meio; fechar por cima em vez de duplicar",
+      "Exportação e importação de anotações agora também reconhecem listas"
+    ]
+  },
+  {
+    version: "v2.04",
+    changes: [
+      "Novos botões \"Importar\" (bloco selecionado) na barra de ferramentas e \"Importar mapa (.md)\" na aba Mapas",
+      "A importação lê o mesmo formato que a exportação gera: os títulos (#, ##, ###...) viram a hierarquia de blocos de novo, e negrito/itálico/sublinhado/código/blocos de destaque voltam a ser formatação de verdade",
+      "Importar bloco cria os blocos dentro do bloco selecionado; importar mapa cria um mapa novo inteiro"
+    ]
+  },
+  {
+    version: "v2.03",
+    changes: [
+      "Criação de bloco inteligente: ao clicar em \"+ Bloco\", o próximo clique no mapa decide onde ele nasce (Esc cancela)",
+      "Cores da anotação agora são por posição na paleta, não por valor fixo — se você trocar de tema, o texto já colorido acompanha a cor que estiver naquele mesmo lugar na nova paleta",
+      "Adicionada a versão v2.0 que estava faltando no Update Log",
+      "Descrições removidas da lista de temas — só o nome agora",
+      "Botão \"Restaurar atalhos padrão\" corrigido — tinha uma regra de CSS conflitante deixando ele mais largo que o painel",
+      "Novos botões: \"Exportar\" (bloco selecionado) na barra de ferramentas, e \"Exportar mapa atual\" na aba Mapas — geram um arquivo .md legível, com a anotação convertida pra markdown"
+    ]
+  },
   {
     version: "v2.02",
     changes: [
@@ -22,7 +51,7 @@ const UPDATE_LOG = [
     ]
   },
   {
-    version: "v1.2",
+    version: "v2.0",
     changes: [
       "Editor de anotações totalmente novo: negrito, itálico, sublinhado e código em linha",
       "Cor de texto com paleta própria por tema (Dracula usa as cores de sintaxe do VSCode, Jarvis usa tons de azul/ciano, e assim por diante)",

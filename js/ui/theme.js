@@ -110,7 +110,6 @@ function renderThemeGroup(
       <span class="theme-swatch swatch-${theme.key}"></span>
       <span class="theme-info">
         <span class="theme-name">${theme.name}</span>
-        <span class="theme-desc">${theme.desc}</span>
       </span>
       ${
         theme.key === current

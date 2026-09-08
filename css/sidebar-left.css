@@ -566,11 +566,6 @@
   background: var(--accent-tint);
 }
 
-#resetShortcutsBtn {
-  margin-top: 12px;
-  width: 100%;
-}
-
 /* ---------- Rodapé ---------- */
 
 #panelFooter {

@@ -10,12 +10,145 @@
 */
 let connectionLineCache = new Map();
 
+/*
+  Mesma ideia, só que pros números de ordem (círculo +
+  texto) que aparecem no meio das linhas quando ativado.
+*/
+let orderLabelCache = new Map();
+
 function clearAllConnectionLines() {
   connectionLineCache.forEach(
     line => line.remove()
   );
 
   connectionLineCache.clear();
+
+  orderLabelCache.forEach(
+    group => group.remove()
+  );
+
+  orderLabelCache.clear();
+}
+
+function removeOrderLabel(key) {
+  const group =
+    orderLabelCache.get(key);
+
+  if (group) {
+    group.remove();
+    orderLabelCache.delete(key);
+  }
+}
+
+function updateOrderLabel(
+  key,
+  nodeId,
+  x,
+  y,
+  orderValue
+) {
+  let group =
+    orderLabelCache.get(key);
+
+  if (!group) {
+    group =
+      document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "g"
+      );
+
+    group.classList.add(
+      "connection-order"
+    );
+
+    const circle =
+      document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "circle"
+      );
+
+    circle.setAttribute("r", "9");
+
+    const text =
+      document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "text"
+      );
+
+    text.setAttribute(
+      "text-anchor",
+      "middle"
+    );
+
+    text.setAttribute("dy", "3.5");
+
+    group.appendChild(circle);
+    group.appendChild(text);
+
+    group.addEventListener(
+      "click",
+      event => {
+        event.stopPropagation();
+        editNodeOrder(
+          group.dataset.nodeId
+        );
+      }
+    );
+
+    document
+      .getElementById("connections")
+      .appendChild(group);
+
+    orderLabelCache.set(
+      key,
+      group
+    );
+  }
+
+  group.dataset.nodeId = nodeId;
+
+  group.setAttribute(
+    "transform",
+    `translate(${x}, ${y})`
+  );
+
+  group.querySelector(
+    "text"
+  ).textContent = orderValue;
+}
+
+/*
+  Clicar no número de ordem deixa trocar pra qualquer
+  valor — útil pra reordenar uma sequência de ensino.
+*/
+async function editNodeOrder(
+  nodeId
+) {
+  const node = getNode(nodeId);
+
+  if (!node) return;
+
+  const value = await showPrompt(
+    "Número de ordem:",
+    String(node.order ?? 0)
+  );
+
+  if (value === null) return;
+
+  const parsed = parseInt(
+    value,
+    10
+  );
+
+  if (Number.isNaN(parsed)) return;
+
+  pushHistory();
+
+  node.order = parsed;
+
+  touchMapEdited();
+  render();
+  saveData();
 }
 
 function drawConnections() {
@@ -81,7 +214,7 @@ function drawConnections() {
   );
 
   /*
-    Remove só as linhas que não se aplicam mais
+    Remove só as linhas (e números) que não se aplicam mais
     (bloco escondido/apagado ou conexão removida).
   */
   connectionLineCache.forEach(
@@ -89,6 +222,7 @@ function drawConnections() {
       if (!activeKeys.has(key)) {
         line.remove();
         connectionLineCache.delete(key);
+        removeOrderLabel(key);
       }
     }
   );
@@ -114,6 +248,8 @@ function drawLine(
       stale.remove();
       connectionLineCache.delete(key);
     }
+
+    removeOrderLabel(key);
 
     return;
   }
@@ -166,4 +302,35 @@ function drawLine(
   line.setAttribute("y1", start.y);
   line.setAttribute("x2", end.x);
   line.setAttribute("y2", end.y);
+
+  /*
+    Número de ordem: só nas linhas hierárquicas (não nas
+    extras), e só quando ativado nas configurações.
+  */
+  const map = currentMap();
+
+  const showOrder =
+    map &&
+    map.showOrderNumbers &&
+    !extra;
+
+  if (showOrder) {
+    const midX =
+      (start.x + end.x) / 2;
+
+    const midY =
+      (start.y + end.y) / 2;
+
+    const childNode = getNode(toId);
+
+    updateOrderLabel(
+      key,
+      toId,
+      midX,
+      midY,
+      childNode?.order ?? 0
+    );
+  } else {
+    removeOrderLabel(key);
+  }
 }
