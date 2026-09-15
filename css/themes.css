@@ -41,15 +41,14 @@ html[data-theme="dark-modern"] {
   --grid-line: rgba(255, 255, 255, .05);
   --board-glow: rgba(255, 255, 255, .025);
   /* Paleta de cores do editor de anotações */
-  --note-color-0: #f5f5f5;
-  --note-color-1: #ff6b6b;
-  --note-color-2: #ffa94d;
-  --note-color-3: #ffd43b;
-  --note-color-4: #69db7c;
-  --note-color-5: #66d9e8;
-  --note-color-6: #74c0fc;
-  --note-color-7: #b197fc;
-
+  --note-color-0: #f5f5f5; /* Destaque */
+  --note-color-1: #ff5c5c; /* Atenção/Erro */
+  --note-color-2: #4ade80; /* Sucesso */
+  --note-color-3: #fbbf24; /* Aviso */
+  --note-color-4: #60a5fa; /* Informação */
+  --note-color-5: #c084fc; /* Especial */
+  --note-color-6: #22d3ee; /* Técnico */
+  --note-color-7: #9ca3af; /* Secundário */
 }
 
 /*
@@ -85,15 +84,14 @@ html[data-theme="dracula"] {
   --grid-line: rgba(189, 147, 249, .08);
   --board-glow: rgba(189, 147, 249, .04);
   /* Paleta de cores do editor de anotações */
-  --note-color-0: #f8f8f2;
-  --note-color-1: #ff79c6;
-  --note-color-2: #bd93f9;
-  --note-color-3: #8be9fd;
-  --note-color-4: #50fa7b;
-  --note-color-5: #ffb86c;
-  --note-color-6: #ff5555;
-  --note-color-7: #f1fa8c;
-
+  --note-color-0: #f8f8f2; /* Destaque */
+  --note-color-1: #ff5555; /* Atenção/Erro */
+  --note-color-2: #50fa7b; /* Sucesso */
+  --note-color-3: #ffb86c; /* Aviso */
+  --note-color-4: #8be9fd; /* Informação */
+  --note-color-5: #bd93f9; /* Especial */
+  --note-color-6: #ff79c6; /* Técnico */
+  --note-color-7: #6272a4; /* Secundário */
 }
 
 /*
@@ -129,15 +127,14 @@ html[data-theme="ultron"] {
   --grid-line: rgba(224, 52, 63, .07);
   --board-glow: rgba(224, 52, 63, .05);
   /* Paleta de cores do editor de anotações */
-  --note-color-0: #e8e8ea;
-  --note-color-1: #ff6b6b;
-  --note-color-2: #e0343f;
-  --note-color-3: #ff9f43;
-  --note-color-4: #c4c5ca;
-  --note-color-5: #8a8b90;
-  --note-color-6: #d4af37;
-  --note-color-7: #b7202b;
-
+  --note-color-0: #e8e8ea; /* Destaque */
+  --note-color-1: #e0343f; /* Atenção/Erro */
+  --note-color-2: #4ade80; /* Sucesso */
+  --note-color-3: #ff9f43; /* Aviso */
+  --note-color-4: #7dd3fc; /* Informação */
+  --note-color-5: #f472b6; /* Especial */
+  --note-color-6: #c4c5ca; /* Técnico */
+  --note-color-7: #8a8b90; /* Secundário */
 }
 
 /*
@@ -174,15 +171,14 @@ html[data-theme="jarvis"] {
   --grid-line: rgba(46, 230, 255, .09);
   --board-glow: rgba(46, 230, 255, .06);
   /* Paleta de cores do editor de anotações */
-  --note-color-0: #d8f4ff;
-  --note-color-1: #2ee6ff;
-  --note-color-2: #7fd4f0;
-  --note-color-3: #4fa8d8;
-  --note-color-4: #34d1a1;
-  --note-color-5: #ffb347;
-  --note-color-6: #ff5f5f;
-  --note-color-7: #bfe9f7;
-
+  --note-color-0: #d8f4ff; /* Destaque */
+  --note-color-1: #ff5f5f; /* Atenção/Erro */
+  --note-color-2: #34d1a1; /* Sucesso */
+  --note-color-3: #ffb347; /* Aviso */
+  --note-color-4: #2ee6ff; /* Informação */
+  --note-color-5: #7fd4f0; /* Especial */
+  --note-color-6: #4fa8d8; /* Técnico */
+  --note-color-7: #4f7c8c; /* Secundário */
 }
 
 /*
@@ -219,15 +215,14 @@ html[data-theme="light-modern"] {
   --grid-line: rgba(0, 0, 0, .05);
   --board-glow: rgba(67, 97, 201, .03);
   /* Paleta de cores do editor de anotações */
-  --note-color-0: #202124;
-  --note-color-1: #1d3a8f;
-  --note-color-2: #0f766e;
-  --note-color-3: #15803d;
-  --note-color-4: #92600b;
-  --note-color-5: #b91c1c;
-  --note-color-6: #6d28d9;
-  --note-color-7: #334155;
-
+  --note-color-0: #202124; /* Destaque */
+  --note-color-1: #b91c1c; /* Atenção/Erro */
+  --note-color-2: #15803d; /* Sucesso */
+  --note-color-3: #92600b; /* Aviso */
+  --note-color-4: #1d3a8f; /* Informação */
+  --note-color-5: #6d28d9; /* Especial */
+  --note-color-6: #0f766e; /* Técnico */
+  --note-color-7: #64748b; /* Secundário */
 }
 
 /*
@@ -264,13 +259,12 @@ html[data-theme="creme"] {
   --grid-line: rgba(122, 75, 37, .09);
   --board-glow: rgba(122, 75, 37, .05);
   /* Paleta de cores do editor de anotações */
-  --note-color-0: #4a3323;
-  --note-color-1: #b5533c;
-  --note-color-2: #a97d1f;
-  --note-color-3: #3f6b3f;
-  --note-color-4: #6b3f5e;
-  --note-color-5: #2d4a6b;
-  --note-color-6: #7a4b25;
-  --note-color-7: #8d7355;
-
+  --note-color-0: #4a3323; /* Destaque */
+  --note-color-1: #b5533c; /* Atenção/Erro */
+  --note-color-2: #4b6b3f; /* Sucesso */
+  --note-color-3: #a97d1f; /* Aviso */
+  --note-color-4: #2d4a6b; /* Informação */
+  --note-color-5: #6b3f5e; /* Especial */
+  --note-color-6: #5a6b6b; /* Técnico */
+  --note-color-7: #8d7355; /* Secundário */
 }

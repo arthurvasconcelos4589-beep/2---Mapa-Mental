@@ -2,9 +2,30 @@
    LOG DE ATUALIZAÇÕES
    ============================================================ */
 
-const APP_VERSION = "v2.1";
+const APP_VERSION = "v2.13";
 
 const UPDATE_LOG = [
+  {
+    version: "v2.13",
+    changes: [
+      "Corrigido: números de ordem (e as linhas) ficavam escondidos atrás dos blocos — principalmente perto do bloco central, por ele ser maior. Agora as conexões sempre ficam visíveis por cima de qualquer bloco, em qualquer nível"
+    ]
+  },
+  {
+    version: "v2.12",
+    changes: [
+      "Paletas de cor redesenhadas: cada uma das 8 posições agora tem um papel fixo (Destaque, Atenção/Erro, Sucesso, Aviso, Informação, Especial, Técnico, Secundário) — o mouse sobre a cor mostra esse nome. Trocar de tema muda o tom, mas o sentido de cada cor se mantém",
+      "Botões de exportar/importar bloco na barra de ferramentas viraram ícones compactos (evita quebrar em telas menores)",
+      "Botões de exportar/importar mapa reorganizados lado a lado na aba Mapas",
+      "Números de ordem nas conexões agora mostram uma dica ao passar o mouse (\"Clique para mudar a ordem\")"
+    ]
+  },
+  {
+    version: "v2.11",
+    changes: [
+      "Corrigido: apertar Enter dentro de um bloco de destaque (markdown) estava cortando em outro bloco separado, deixando uma linha estranha no meio da caixa. Agora Enter só quebra a linha e continua no mesmo bloco"
+    ]
+  },
   {
     version: "v2.1",
     changes: [

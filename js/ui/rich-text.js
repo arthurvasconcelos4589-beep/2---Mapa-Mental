@@ -6,30 +6,47 @@
    em colunas e linhas mesmo com formatação aplicada.
    ============================================================ */
 
+/*
+  Cada posição da paleta tem um PAPEL fixo — não é só "a
+  cor que fica ali", é "a cor de Erro", "a de Sucesso" etc.
+  Trocar de tema muda o tom, mas o SENTIDO de cada cor se
+  mantém, então o que você grifou continua fazendo sentido.
+*/
+const NOTE_COLOR_ROLES = [
+  "Destaque",
+  "Atenção / Erro",
+  "Sucesso",
+  "Aviso",
+  "Informação",
+  "Especial",
+  "Técnico",
+  "Secundário"
+];
+
 const TEXT_COLOR_PALETTES = {
   "dark-modern": [
-    "#f5f5f5", "#ff6b6b", "#ffa94d", "#ffd43b",
-    "#69db7c", "#66d9e8", "#74c0fc", "#b197fc"
+    "#f5f5f5", "#ff5c5c", "#4ade80", "#fbbf24",
+    "#60a5fa", "#c084fc", "#22d3ee", "#9ca3af"
   ],
   "dracula": [
-    "#f8f8f2", "#ff79c6", "#bd93f9", "#8be9fd",
-    "#50fa7b", "#ffb86c", "#ff5555", "#f1fa8c"
+    "#f8f8f2", "#ff5555", "#50fa7b", "#ffb86c",
+    "#8be9fd", "#bd93f9", "#ff79c6", "#6272a4"
   ],
   "ultron": [
-    "#e8e8ea", "#ff6b6b", "#e0343f", "#ff9f43",
-    "#c4c5ca", "#8a8b90", "#d4af37", "#b7202b"
+    "#e8e8ea", "#e0343f", "#4ade80", "#ff9f43",
+    "#7dd3fc", "#f472b6", "#c4c5ca", "#8a8b90"
   ],
   "jarvis": [
-    "#d8f4ff", "#2ee6ff", "#7fd4f0", "#4fa8d8",
-    "#34d1a1", "#ffb347", "#ff5f5f", "#bfe9f7"
+    "#d8f4ff", "#ff5f5f", "#34d1a1", "#ffb347",
+    "#2ee6ff", "#7fd4f0", "#4fa8d8", "#4f7c8c"
   ],
   "light-modern": [
-    "#202124", "#1d3a8f", "#0f766e", "#15803d",
-    "#92600b", "#b91c1c", "#6d28d9", "#334155"
+    "#202124", "#b91c1c", "#15803d", "#92600b",
+    "#1d3a8f", "#6d28d9", "#0f766e", "#64748b"
   ],
   "creme": [
-    "#4a3323", "#b5533c", "#a97d1f", "#3f6b3f",
-    "#6b3f5e", "#2d4a6b", "#7a4b25", "#8d7355"
+    "#4a3323", "#b5533c", "#4b6b3f", "#a97d1f",
+    "#2d4a6b", "#6b3f5e", "#5a6b6b", "#8d7355"
   ]
 };
 
@@ -265,7 +282,9 @@ function renderNoteColorPopover() {
       swatch.className =
         "note-color-option";
       swatch.style.background = color;
-      swatch.title = color;
+      swatch.title =
+        NOTE_COLOR_ROLES[index] ||
+        color;
 
       swatch.addEventListener(
         "click",
@@ -476,9 +495,82 @@ function handleNoteAutoPair(event) {
   return true;
 }
 
+/*
+  Enter dentro de um bloco de destaque continua DENTRO do
+  mesmo bloco (só quebra a linha), em vez de o navegador
+  cortar em outro bloco separado — o que deixava uma
+  "linha" estranha cortando a caixa ao meio.
+*/
+function isInsideNoteBlock(node) {
+  const editor = getNoteEditor();
+
+  let el =
+    node.nodeType === Node.TEXT_NODE
+      ? node.parentElement
+      : node;
+
+  while (el && el !== editor) {
+    if (
+      el.classList &&
+      el.classList.contains(
+        "note-block"
+      )
+    ) {
+      return true;
+    }
+
+    el = el.parentElement;
+  }
+
+  return false;
+}
+
+function handleNoteBlockEnter(
+  event
+) {
+  if (event.key !== "Enter") {
+    return false;
+  }
+
+  const selection =
+    window.getSelection();
+
+  if (
+    !selection ||
+    !selection.rangeCount
+  ) {
+    return false;
+  }
+
+  const range =
+    selection.getRangeAt(0);
+
+  if (
+    !isInsideNoteBlock(
+      range.startContainer
+    )
+  ) {
+    return false;
+  }
+
+  event.preventDefault();
+
+  document.execCommand(
+    "insertLineBreak"
+  );
+
+  triggerNoteSave();
+
+  return true;
+}
+
 function handleNoteAutoPairsKeydown(
   event
 ) {
+  if (handleNoteBlockEnter(event)) {
+    return;
+  }
+
   if (
     event.ctrlKey ||
     event.metaKey ||

@@ -285,6 +285,17 @@
   width: 100%;
 }
 
+.map-action-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.map-action-row button {
+  flex: 1;
+  min-width: 0;
+}
+
 /* ---------- Aba Tema ---------- */
 
 .theme-group {

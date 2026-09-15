@@ -71,8 +71,11 @@
         <div id="mapsList"></div>
 
         <button id="newMapBtn" class="wide-button">+ Novo mapa mental</button>
-        <button id="exportMapBtn" class="wide-button">Exportar mapa atual</button>
-        <button id="importMapBtn" class="wide-button">Importar mapa (.md)</button>
+
+        <div class="map-action-row">
+          <button id="exportMapBtn" title="Exportar o mapa atual (.md)">Exportar</button>
+          <button id="importMapBtn" title="Importar um mapa novo (.md)">Importar</button>
+        </div>
       </section>
 
       <!-- TEMA -->
@@ -183,7 +186,7 @@
     </div>
 
     <div id="panelFooter">
-      <span id="panelVersion">v2.1</span>
+      <span id="panelVersion">v2.13</span>
       <button id="panelHelpBtn" class="icon-button" title="Log de atualizações">?</button>
     </div>
   </aside>
@@ -207,8 +210,20 @@
 
     <div id="toolbar">
       <button id="addChildBtn" class="primary">+ Bloco</button>
-      <button id="exportBlockBtn" title="Exportar bloco selecionado">Exportar</button>
-      <button id="importBlockBtn" title="Importar dentro do bloco selecionado">Importar</button>
+      <button id="exportBlockBtn" class="icon-button" title="Exportar bloco selecionado (.md)">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v12"/>
+          <path d="M7 10l5 5 5-5"/>
+          <path d="M5 20h14"/>
+        </svg>
+      </button>
+      <button id="importBlockBtn" class="icon-button" title="Importar dentro do bloco selecionado (.md)">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 15V3"/>
+          <path d="M7 8l5-5 5 5"/>
+          <path d="M5 20h14"/>
+        </svg>
+      </button>
       <button id="deleteBtn">Excluir</button>
     </div>
 

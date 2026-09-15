@@ -82,8 +82,18 @@ function updateOrderLabel(
 
     text.setAttribute("dy", "3.5");
 
+    const title =
+      document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "title"
+      );
+
+    title.textContent =
+      "Clique para mudar a ordem";
+
     group.appendChild(circle);
     group.appendChild(text);
+    group.appendChild(title);
 
     group.addEventListener(
       "click",
