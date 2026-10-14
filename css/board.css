@@ -25,7 +25,8 @@
   cursor: crosshair;
 }
 
-#placementHint {
+#placementHint,
+#reparentHint {
   position: absolute;
   z-index: 35;
   top: 62px;

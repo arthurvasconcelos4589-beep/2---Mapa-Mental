@@ -296,7 +296,8 @@
 
 /* ---------- Aba Mapas ---------- */
 
-#mapSearchInput {
+#mapSearchInput,
+#reparentSearchInput {
   width: 100%;
   padding: 9px 11px;
   margin-top: 2px;
@@ -308,16 +309,19 @@
   outline: none;
 }
 
-#mapSearchInput:focus {
+#mapSearchInput:focus,
+#reparentSearchInput:focus {
   border-color: var(--btn-border-hover);
   box-shadow: 0 0 0 1px var(--accent-soft);
 }
 
-#mapSearchInput::placeholder {
+#mapSearchInput::placeholder,
+#reparentSearchInput::placeholder {
   color: var(--muted);
 }
 
-#mapsList {
+#mapsList,
+#reparentList {
   flex: 1;
   min-height: 40px;
   overflow-y: auto;

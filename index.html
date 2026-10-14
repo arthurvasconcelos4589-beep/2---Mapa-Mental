@@ -299,7 +299,7 @@
     </div>
 
     <div id="panelFooter">
-      <span id="panelVersion">v3.1.0</span>
+      <span id="panelVersion">v3.2.0</span>
       <button id="panelHelpBtn" class="icon-button" title="Log de atualizações">?</button>
     </div>
   </aside>
@@ -337,10 +337,12 @@
           <path d="M5 20h14"/>
         </svg>
       </button>
+      <button id="reparentBtn" title="Trocar o pai do bloco selecionado (M)">Reconectar</button>
       <button id="deleteBtn">Excluir</button>
     </div>
 
     <div id="placementHint" hidden>Clique onde quer criar o bloco · Esc cancela</div>
+    <div id="reparentHint" hidden>Clique no novo pai · Ctrl+F busca pelo nome · Esc cancela</div>
 
     <div id="zoomControls">
       <button id="zoomOutBtn" title="Afastar">−</button>
@@ -478,6 +480,23 @@
       <div class="maps-modal-footer">
         <button id="mapDeleteBtn" type="button">Excluir mapa</button>
         <button id="mapGoBtn" type="button" class="primary">Ir para este mapa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       BUSCA DO NOVO PAI (Ctrl+F no modo Reconectar)
+       ========================================================= -->
+  <div id="reparentModal" class="dialog-overlay" hidden>
+    <div class="maps-modal-box reparent-modal-box" role="dialog" aria-modal="true">
+      <div class="maps-modal-header">
+        <span>Escolher novo pai</span>
+        <button type="button" id="reparentModalCloseBtn" class="icon-button" title="Fechar">×</button>
+      </div>
+
+      <div class="reparent-modal-body">
+        <input id="reparentSearchInput" type="text" placeholder="Buscar bloco..." spellcheck="false">
+        <div id="reparentList"></div>
       </div>
     </div>
   </div>

@@ -67,6 +67,15 @@ function createNodeElement(node) {
     event => {
       event.stopPropagation();
 
+      /*
+        No modo Reconectar, clicar num bloco escolhe o novo
+        pai em vez de selecionar.
+      */
+      if (pendingReparentId) {
+        reparentTo(node.id);
+        return;
+      }
+
       selectNode(node.id);
     }
   );
@@ -466,6 +475,8 @@ function moveElement(
 }
 
 function onPointerDown(event) {
+  if (pendingReparentId) return;
+
   const id =
     event.currentTarget.dataset.id;
 
@@ -628,6 +639,8 @@ function handlePointerUp() {
 let pendingNodeCreation = null;
 
 function startNodePlacement(parentId) {
+  cancelReparent();
+
   pendingNodeCreation = { parentId };
 
   document
@@ -963,6 +976,11 @@ function deselectAll() {
     return;
   }
 
+  if (pendingReparentId) {
+    cancelReparent();
+    return;
+  }
+
   AppState.selectedId = null;
 
   render();
@@ -1061,4 +1079,352 @@ function loadGridPreference() {
   ) {
     board.classList.add("grid-on");
   }
+}
+
+/* ============================================================
+   RECONECTAR (trocar o pai de um bloco)
+   ============================================================
+   Como cada bloco só guarda quem é o pai dele, trocar o pai é
+   mudar essa ligação: os filhos do bloco continuam presos a
+   ele e vão junto. O bloco não muda de lugar na tela.
+*/
+
+let pendingReparentId = null;
+
+async function startReparent() {
+  const node =
+    AppState.selectedId
+      ? getNode(AppState.selectedId)
+      : null;
+
+  if (!node) {
+    await showAlert(
+      "Selecione um bloco primeiro."
+    );
+    return;
+  }
+
+  if (!node.parentId) {
+    await showAlert(
+      "O bloco principal não tem pai pra trocar."
+    );
+    return;
+  }
+
+  cancelNodePlacement();
+
+  pendingReparentId = node.id;
+
+  document.getElementById(
+    "reparentHint"
+  ).hidden = false;
+}
+
+function cancelReparent() {
+  if (!pendingReparentId) return;
+
+  pendingReparentId = null;
+
+  document.getElementById(
+    "reparentHint"
+  ).hidden = true;
+
+  closeReparentSearch();
+}
+
+async function reparentTo(newParentId) {
+  const map = currentMap();
+
+  const node =
+    getNode(pendingReparentId);
+
+  const target = getNode(newParentId);
+
+  if (!map || !node || !target) {
+    cancelReparent();
+    return;
+  }
+
+  if (target.id === node.parentId) {
+    await showAlert(
+      "Esse bloco já é o pai atual."
+    );
+    return;
+  }
+
+  /*
+    Mover pra dentro dele mesmo ou de um filho dele criaria
+    um laço (o bloco viraria pai de quem é pai dele).
+  */
+  if (
+    target.id === node.id ||
+    getDescendants(node.id).has(target.id)
+  ) {
+    await showAlert(
+      "Não dá pra mover um bloco pra dentro dele mesmo ou de um dos filhos dele."
+    );
+    return;
+  }
+
+  pushHistory();
+
+  /* Vai pro fim da fila do novo pai. */
+  node.order =
+    childrenOf(target.id).length;
+
+  node.parentId = target.id;
+
+  /*
+    Abre o novo pai e todos os de cima dele, pra o bloco
+    movido continuar visível.
+  */
+  let ancestor = target;
+
+  while (ancestor) {
+    ancestor.childrenOpen = true;
+
+    ancestor = ancestor.parentId
+      ? getNode(ancestor.parentId)
+      : null;
+  }
+
+  cancelReparent();
+
+  touchMapEdited();
+  render();
+  saveData();
+}
+
+/* ---------- Busca do novo pai (Ctrl+F no modo) ---------- */
+
+function normalizeSearchText(text) {
+  return (text || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function isReparentSearchOpen() {
+  const modal =
+    document.getElementById(
+      "reparentModal"
+    );
+
+  return !!modal && !modal.hidden;
+}
+
+function openReparentSearch() {
+  if (!pendingReparentId) return;
+
+  const input =
+    document.getElementById(
+      "reparentSearchInput"
+    );
+
+  input.value = "";
+
+  document.getElementById(
+    "reparentModal"
+  ).hidden = false;
+
+  renderReparentList();
+
+  input.focus();
+}
+
+function closeReparentSearch() {
+  const modal =
+    document.getElementById(
+      "reparentModal"
+    );
+
+  if (modal) modal.hidden = true;
+}
+
+/*
+  Só aparecem blocos que podem ser o novo pai: fora ele mesmo,
+  os descendentes dele e o pai atual.
+*/
+function renderReparentList() {
+  const map = currentMap();
+
+  const node =
+    getNode(pendingReparentId);
+
+  const list =
+    document.getElementById(
+      "reparentList"
+    );
+
+  list.innerHTML = "";
+
+  if (!map || !node) return;
+
+  const blocked =
+    getDescendants(node.id);
+
+  const query = normalizeSearchText(
+    document
+      .getElementById(
+        "reparentSearchInput"
+      )
+      .value.trim()
+  );
+
+  const matches = map.nodes.filter(
+    candidate =>
+      candidate.id !== node.id &&
+      candidate.id !== node.parentId &&
+      !blocked.has(candidate.id) &&
+      normalizeSearchText(
+        candidate.title
+      ).includes(query)
+  );
+
+  if (matches.length === 0) {
+    const empty =
+      document.createElement("div");
+
+    empty.className = "panel-empty";
+    empty.textContent =
+      "Nenhum bloco encontrado.";
+
+    list.appendChild(empty);
+    return;
+  }
+
+  matches.forEach(candidate => {
+    const parent = candidate.parentId
+      ? getNode(candidate.parentId)
+      : null;
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "map-item reparent-item";
+
+    const nameBtn =
+      document.createElement("button");
+
+    nameBtn.className =
+      "map-item-name";
+
+    const title =
+      document.createElement("span");
+
+    title.className =
+      "map-item-name-text";
+
+    title.textContent =
+      candidate.title;
+
+    const meta =
+      document.createElement("span");
+
+    meta.className =
+      "map-item-name-meta";
+
+    meta.textContent = parent
+      ? `dentro de: ${parent.title}`
+      : "bloco principal";
+
+    nameBtn.appendChild(title);
+    nameBtn.appendChild(meta);
+    row.appendChild(nameBtn);
+
+    row.addEventListener(
+      "click",
+      () => {
+        closeReparentSearch();
+        reparentTo(candidate.id);
+      }
+    );
+
+    list.appendChild(row);
+  });
+}
+
+function bindReparent() {
+  const input =
+    document.getElementById(
+      "reparentSearchInput"
+    );
+
+  input.addEventListener(
+    "input",
+    renderReparentList
+  );
+
+  /* Enter escolhe o primeiro resultado da lista. */
+  input.addEventListener(
+    "keydown",
+    event => {
+      if (event.key !== "Enter") {
+        return;
+      }
+
+      document
+        .querySelector(
+          "#reparentList .reparent-item"
+        )
+        ?.click();
+    }
+  );
+
+  document
+    .getElementById(
+      "reparentModalCloseBtn"
+    )
+    .addEventListener(
+      "click",
+      closeReparentSearch
+    );
+
+  const modal =
+    document.getElementById(
+      "reparentModal"
+    );
+
+  modal.addEventListener(
+    "click",
+    event => {
+      if (event.target === modal) {
+        closeReparentSearch();
+      }
+    }
+  );
+
+  document.addEventListener(
+    "keydown",
+    event => {
+      const dialog =
+        document.getElementById(
+          "dialogOverlay"
+        );
+
+      if (dialog && !dialog.hidden) {
+        return;
+      }
+
+      if (
+        event.key === "Escape" &&
+        isReparentSearchOpen()
+      ) {
+        closeReparentSearch();
+        return;
+      }
+
+      if (
+        pendingReparentId &&
+        !isDialogOpen() &&
+        (event.ctrlKey ||
+          event.metaKey) &&
+        event.key.toLowerCase() === "f"
+      ) {
+        event.preventDefault();
+        openReparentSearch();
+      }
+    }
+  );
 }

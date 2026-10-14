@@ -2,9 +2,17 @@
    LOG DE ATUALIZAÇÕES
    ============================================================ */
 
-const APP_VERSION = "v3.1.0";
+const APP_VERSION = "v3.2.0";
 
 const UPDATE_LOG = [
+  {
+    version: "v3.2.0",
+    changes: [
+      "Reconectar bloco: agora dá pra trocar o pai de um bloco sem apagar e reescrever. Selecione o bloco, aperte M (ou o botão Reconectar na barra de cima) e clique no novo pai. Os filhos do bloco vão junto, ele vai pro fim da fila do novo pai (o número da linha acompanha) e continua no mesmo lugar da tela — só a linha muda. A tecla M pode ser mudada na aba Atalhos",
+      "No modo Reconectar, Ctrl+F abre uma busca pelo nome do bloco (mostrando de qual bloco cada um faz parte), útil quando o novo pai está longe ou escondido. Enter escolhe o primeiro resultado e Esc cancela",
+      "O app avisa se você tentar mover um bloco pra dentro dele mesmo ou de um dos filhos dele, e o bloco principal não pode ser reconectado"
+    ]
+  },
   {
     version: "v3.1.0",
     changes: [

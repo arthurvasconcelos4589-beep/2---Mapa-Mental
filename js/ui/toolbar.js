@@ -29,3 +29,10 @@ document
     "click",
     () => deleteSelectedNode()
   );
+
+document
+  .getElementById("reparentBtn")
+  .addEventListener(
+    "click",
+    () => startReparent()
+  );

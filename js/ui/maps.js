@@ -670,6 +670,7 @@ async function createMap() {
 
 function switchMap(mapId) {
   closeMapsModal();
+  cancelReparent();
 
   if (
     mapId === AppState.currentMapId

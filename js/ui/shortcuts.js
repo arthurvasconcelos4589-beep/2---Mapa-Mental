@@ -56,6 +56,13 @@ const SHORTCUT_DEFS = [
     run: () => centerView()
   },
   {
+    id: "reparent-node",
+    label: "Reconectar bloco",
+    defaultKey: "m",
+    context: "global",
+    run: () => startReparent()
+  },
+  {
     id: "focus-node",
     label: "Focar no bloco",
     defaultKey: "f",
@@ -219,10 +226,16 @@ function isDialogOpen() {
       "function" &&
     isMapsModalOpen();
 
+  const reparentVisible =
+    typeof isReparentSearchOpen ===
+      "function" &&
+    isReparentSearchOpen();
+
   return (
     dialogVisible ||
     changelogVisible ||
-    mapMenusVisible
+    mapMenusVisible ||
+    reparentVisible
   );
 }
 

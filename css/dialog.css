@@ -280,3 +280,17 @@
     width: auto;
   }
 }
+
+/* Busca do novo pai (Reconectar) — usa o visual da janela de mapas */
+.reparent-modal-box {
+  width: 440px;
+  height: 440px;
+}
+
+.reparent-modal-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 14px;
+}
