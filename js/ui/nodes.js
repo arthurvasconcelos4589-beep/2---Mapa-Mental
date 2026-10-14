@@ -140,18 +140,30 @@ function updatePositions() {
   const area =
     board.getBoundingClientRect();
 
+  const map = currentMap();
+
+  /*
+    Se "Blocos se movem" estiver desligado, tudo fica
+    parado na posição exata (nenhuma oscilação).
+  */
+  const wobbleOn =
+    map?.wobbleEnabled !== false;
+
   /*
     0% congela os blocos completamente (ficam parados
     exatamente na posição salva); 100% é o padrão;
     pode passar disso pra um efeito mais acentuado.
   */
-  const wobbleScale =
-    (currentMap()?.wobbleIntensity ??
-      100) / 100;
+  const wobbleScale = wobbleOn
+    ? (map?.wobbleIntensity ?? 100) /
+      100
+    : 0;
 
   const wobbleSpeedScale =
-    (currentMap()?.wobbleSpeed ??
-      100) / 100;
+    (map?.wobbleSpeed ?? 100) / 100;
+
+  const wobblePattern =
+    map?.wobblePattern || "circular";
 
   visibleNodes().forEach(node => {
     const element =
@@ -171,18 +183,38 @@ function updatePositions() {
       (node.speed || .55) *
       wobbleSpeedScale;
 
+    const t = now * speed + node.phase;
+
+    let offsetX;
+    let offsetY;
+
+    if (wobblePattern === "infinity") {
+      /*
+        Padrão em "8"/infinito: frequência de Y dobrada
+        em relação a X (curva de Lissajous clássica).
+      */
+      offsetX = Math.sin(t) * ampX;
+      offsetY =
+        Math.sin(2 * t) * ampY * .7;
+    } else {
+      /*
+        Circular/orgânico: frequências levemente
+        diferentes entre X e Y, sem repetir sempre o
+        mesmo laço.
+      */
+      offsetX = Math.sin(t) * ampX;
+      offsetY =
+        Math.cos(
+          now * speed * .83 +
+            node.phase
+        ) * ampY;
+    }
+
     let x =
-      node.x * area.width +
-      Math.sin(
-        now * speed + node.phase
-      ) * ampX;
+      node.x * area.width + offsetX;
 
     let y =
-      node.y * area.height +
-      Math.cos(
-        now * speed * .83 +
-        node.phase
-      ) * ampY;
+      node.y * area.height + offsetY;
 
     const halfW =
       element.offsetWidth / 2 + 10;
@@ -928,19 +960,10 @@ function deselectAll() {
 }
 
 /*
-  Ctrl+K: abre a aba Mapas e foca a busca.
+  Ctrl+K: abre a janela de mapas e foca a busca.
 */
 function focusMapSearch() {
-  const panel =
-    document.getElementById(
-      "mapsPanel"
-    );
-
-  if (panel) {
-    panel.classList.remove("closed");
-  }
-
-  switchPanelTab("mapas");
+  openMapsModal();
 
   const input =
     document.getElementById(

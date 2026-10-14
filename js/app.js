@@ -70,7 +70,7 @@ document
   .getElementById("newMapBtn")
   .addEventListener(
     "click",
-    createMap
+    () => runAndCloseModalIfMapChanged(createMap)
   );
 
 document
@@ -84,7 +84,7 @@ document
   .getElementById("importMapBtn")
   .addEventListener(
     "click",
-    importMap
+    () => runAndCloseModalIfMapChanged(importMap)
   );
 
 document
@@ -322,6 +322,7 @@ bindNodeStyleSliders();
 bindLayoutToggle();
 bindShortcutsTab();
 bindNoteToolbar();
+bindMapControls();
 
 document.getElementById(
   "panelVersion"

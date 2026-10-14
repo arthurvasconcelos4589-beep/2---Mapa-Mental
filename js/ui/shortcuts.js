@@ -202,11 +202,20 @@ function isDialogOpen() {
   const dialogVisible =
     !!overlay && !overlay.hidden;
 
+  const changelogVisible =
+    typeof isChangelogOpen ===
+      "function" &&
+    isChangelogOpen();
+
+  const mapMenusVisible =
+    typeof isMapsModalOpen ===
+      "function" &&
+    isMapsModalOpen();
+
   return (
     dialogVisible ||
-    (typeof isChangelogOpen ===
-      "function" &&
-      isChangelogOpen())
+    changelogVisible ||
+    mapMenusVisible
   );
 }
 

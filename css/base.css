@@ -20,6 +20,16 @@
   --node-text: #f5f5f5;
   --node-corner: #fff;
   --node-font-size: 14px;
+  --node-font-family: inherit;
+  --title-transform: none;
+  --title-white-space: nowrap;
+  --title-max-lines: 1;
+  --node-width: 190px;
+  --node-height: 82px;
+  --node-radius: 0px;
+  --node-dimmed-opacity: .9;
+  --node-selected-glow: .6;
+  --corners-opacity: 1;
   --connection-color: rgba(255, 255, 255, .45);
   --connection-color-extra: rgba(255, 255, 255, .3);
   --connection-width: 1.4;

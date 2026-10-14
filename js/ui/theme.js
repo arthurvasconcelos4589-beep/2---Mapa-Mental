@@ -74,24 +74,19 @@ function loadTheme() {
     valid ? saved : DEFAULT_THEME;
 }
 
-function renderThemeGroup(
-  container,
-  label,
+function renderThemeList(
+  containerId,
   groupKey,
   current
 ) {
-  const heading =
-    document.createElement("div");
+  const container =
+    document.getElementById(
+      containerId
+    );
 
-  heading.className = "panel-subtitle";
-  heading.textContent = label;
+  if (!container) return;
 
-  container.appendChild(heading);
-
-  const wrap =
-    document.createElement("div");
-
-  wrap.className = "theme-group";
+  container.innerHTML = "";
 
   THEMES.filter(
     theme => theme.group === groupKey
@@ -123,34 +118,23 @@ function renderThemeGroup(
       () => applyTheme(theme.key)
     );
 
-    wrap.appendChild(row);
+    container.appendChild(row);
   });
-
-  container.appendChild(wrap);
 }
 
 function renderThemeTab() {
-  const list =
-    document.getElementById("themeList");
-
-  if (!list) return;
-
   const current =
     document.documentElement.dataset
       .theme || DEFAULT_THEME;
 
-  list.innerHTML = "";
-
-  renderThemeGroup(
-    list,
-    "TEMA ESCURO",
+  renderThemeList(
+    "themeListDark",
     "escuro",
     current
   );
 
-  renderThemeGroup(
-    list,
-    "TEMA CLARO",
+  renderThemeList(
+    "themeListLight",
     "claro",
     current
   );

@@ -45,7 +45,8 @@ function updateOrderLabel(
   nodeId,
   x,
   y,
-  orderValue
+  orderValue,
+  options
 ) {
   let group =
     orderLabelCache.get(key);
@@ -67,8 +68,6 @@ function updateOrderLabel(
         "circle"
       );
 
-    circle.setAttribute("r", "9");
-
     const text =
       document.createElementNS(
         "http://www.w3.org/2000/svg",
@@ -80,16 +79,11 @@ function updateOrderLabel(
       "middle"
     );
 
-    text.setAttribute("dy", "3.5");
-
     const title =
       document.createElementNS(
         "http://www.w3.org/2000/svg",
         "title"
       );
-
-    title.textContent =
-      "Clique para mudar a ordem";
 
     group.appendChild(circle);
     group.appendChild(text);
@@ -99,6 +93,14 @@ function updateOrderLabel(
       "click",
       event => {
         event.stopPropagation();
+
+        if (
+          group.dataset.editable ===
+          "0"
+        ) {
+          return;
+        }
+
         editNodeOrder(
           group.dataset.nodeId
         );
@@ -115,16 +117,51 @@ function updateOrderLabel(
     );
   }
 
+  const radius = (options.size || 18) / 2;
+
   group.dataset.nodeId = nodeId;
+  group.dataset.editable =
+    options.editable ? "1" : "0";
+
+  group.classList.toggle(
+    "no-border",
+    !options.border
+  );
+
+  group.classList.toggle(
+    "locked",
+    !options.editable
+  );
 
   group.setAttribute(
     "transform",
     `translate(${x}, ${y})`
   );
 
+  group
+    .querySelector("circle")
+    .setAttribute("r", radius);
+
+  const text =
+    group.querySelector("text");
+
+  text.setAttribute(
+    "dy",
+    radius * .38
+  );
+
+  text.setAttribute(
+    "font-size",
+    radius * 1.1
+  );
+
+  text.textContent = orderValue;
+
   group.querySelector(
-    "text"
-  ).textContent = orderValue;
+    "title"
+  ).textContent = options.editable
+    ? "Clique para mudar a ordem"
+    : "Renumeração desativada nas configurações";
 }
 
 /*
@@ -267,19 +304,24 @@ function drawLine(
   const from = centerOf(fromElement);
   const to = centerOf(toElement);
 
+  const map = currentMap();
+
   /*
-    Espaço proposital entre a linha e cada bloco.
+    Espaço proposital entre a linha e cada bloco —
+    configurável em Estilização > Espaçamento.
   */
+  const gap = map?.lineGap ?? 14;
+
   const start = edgePoint(
     from,
     to,
-    14
+    gap
   );
 
   const end = edgePoint(
     to,
     from,
-    14
+    gap
   );
 
   let line =
@@ -317,8 +359,6 @@ function drawLine(
     Número de ordem: só nas linhas hierárquicas (não nas
     extras), e só quando ativado nas configurações.
   */
-  const map = currentMap();
-
   const showOrder =
     map &&
     map.showOrderNumbers &&
@@ -338,7 +378,23 @@ function drawLine(
       toId,
       midX,
       midY,
-      childNode?.order ?? 0
+      childNode?.order ?? 0,
+      {
+        border:
+          map.orderNumberBorder !==
+          false,
+        editable:
+          map.orderNumberEditable !==
+          false,
+        /*
+          Proporcional ao zoom: o número encolhe e cresce
+          junto com os blocos, em vez de ficar do mesmo
+          tamanho na tela.
+        */
+        size:
+          (map.orderNumberSize || 18) *
+          (map.zoom || 1)
+      }
     );
   } else {
     removeOrderLabel(key);

@@ -32,18 +32,18 @@
       <span id="panelBrandName">MindMap</span>
     </div>
 
-    <div id="currentMapBadge">
+    <!-- O selo só mostra o mapa atual. Clicar nele abre a janela
+         de mapas (no fim do #app): trocar, criar, excluir,
+         importar, exportar, reordenar e mudar cor/imagem. -->
+    <button id="currentMapBadge" type="button">
       <span id="currentMapBadgeDot"></span>
+      <img id="currentMapBadgeImage" alt="" hidden>
       <span id="currentMapBadgeName">Nenhum mapa</span>
       <span id="currentMapBadgeCount">0 nós</span>
-    </div>
+    </button>
 
     <nav id="panelTabs">
-      <button class="panel-tab active" data-tab="mapas" type="button" title="Mapas">
-        <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
-        <span>Mapas</span>
-      </button>
-      <button class="panel-tab" data-tab="tema" type="button" title="Tema">
+      <button class="panel-tab active" data-tab="tema" type="button" title="Tema">
         <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.3"/><path d="M8 1.7 A6.3 6.3 0 0 1 8 14.3 Z" fill="currentColor" stroke="none"/></svg>
         <span>Tema</span>
       </button>
@@ -51,9 +51,9 @@
         <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><rect x="1" y="2.5" width="14" height="2.4" rx="1"/><rect x="1" y="6.8" width="14" height="2.4" rx="1"/><rect x="1" y="11.1" width="8" height="2.4" rx="1"/></svg>
         <span>Layout</span>
       </button>
-      <button class="panel-tab" data-tab="nos" type="button" title="Nós">
+      <button class="panel-tab" data-tab="nos" type="button" title="Estilização">
         <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 1 L15 8 L8 15 L1 8 Z"/></svg>
-        <span>Nós</span>
+        <span>Estilo</span>
       </button>
       <button class="panel-tab" data-tab="atalhos" type="button" title="Atalhos">
         <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="3.5" width="14" height="9" rx="1.6"/><circle cx="4" cy="7" r=".55" fill="currentColor" stroke="none"/><circle cx="7" cy="7" r=".55" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r=".55" fill="currentColor" stroke="none"/><circle cx="13" cy="7" r=".55" fill="currentColor" stroke="none"/><rect x="4" y="9.4" width="8" height="1.3" rx=".6" fill="currentColor" stroke="none"/></svg>
@@ -62,117 +62,224 @@
     </nav>
 
     <div id="panelBody">
-      <!-- MAPAS -->
-      <section class="panel-view" data-view="mapas">
-        <input id="mapSearchInput" type="text" placeholder="Buscar mapa..." spellcheck="false">
-
-        <div class="panel-subtitle">MAPAS MENTAIS</div>
-
-        <div id="mapsList"></div>
-
-        <button id="newMapBtn" class="wide-button">+ Novo mapa mental</button>
-
-        <div class="map-action-row">
-          <button id="exportMapBtn" title="Exportar o mapa atual (.md)">Exportar</button>
-          <button id="importMapBtn" title="Importar um mapa novo (.md)">Importar</button>
-        </div>
-      </section>
-
       <!-- TEMA -->
-      <section class="panel-view" data-view="tema" hidden>
-        <div id="themeList"></div>
+      <section class="panel-view" data-view="tema">
+        <div class="sub-tabs">
+          <button class="sub-tab active" type="button" data-subtab="escuro">Temas Escuros</button>
+          <button class="sub-tab" type="button" data-subtab="claro">Temas Claros</button>
+        </div>
+
+        <div class="sub-view active" data-subview="tema:escuro">
+          <div id="themeListDark"></div>
+        </div>
+
+        <div class="sub-view" data-subview="tema:claro">
+          <div id="themeListLight"></div>
+        </div>
       </section>
 
       <!-- LAYOUT -->
       <section class="panel-view" data-view="layout" hidden>
-        <div class="panel-subtitle">LAYOUT</div>
+        <div class="sub-tabs">
+          <button class="sub-tab active" type="button" data-subtab="ordem">Ordem</button>
+          <button class="sub-tab" type="button" data-subtab="numeracao">Numeração</button>
+        </div>
 
-        <div id="layoutList"></div>
+        <div class="sub-view active" data-subview="layout:ordem">
+          <div id="layoutList"></div>
+        </div>
 
-        <label class="toggle-row">
-          <span>Numerar conexões</span>
-          <input id="showOrderNumbersToggle" type="checkbox">
-          <span class="toggle-switch"></span>
-        </label>
+        <div class="sub-view" data-subview="layout:numeracao">
+          <label class="toggle-row">
+            <span>Numerar conexões</span>
+            <input id="showOrderNumbersToggle" type="checkbox">
+            <span class="toggle-switch"></span>
+          </label>
+
+          <div id="orderNumberOptions" hidden>
+            <label class="toggle-row">
+              <span>Borda ao redor do número</span>
+              <input id="orderNumberBorderToggle" type="checkbox" checked>
+              <span class="toggle-switch"></span>
+            </label>
+
+            <label class="toggle-row">
+              <span>Permitir renumerar (clique)</span>
+              <input id="orderNumberEditableToggle" type="checkbox" checked>
+              <span class="toggle-switch"></span>
+            </label>
+
+            <div class="slider-row">
+              <div class="slider-label">
+                <span>Tamanho do número</span>
+                <span id="orderNumberSizeValue" class="slider-value">18</span>
+              </div>
+              <input id="orderNumberSizeSlider" type="range" min="12" max="28" step="2" value="18">
+            </div>
+          </div>
+        </div>
       </section>
 
-      <!-- NÓS -->
+      <!-- ESTILIZAÇÃO -->
       <section class="panel-view" data-view="nos" hidden>
-        <div class="panel-subtitle">TIPOGRAFIA E ESPAÇAMENTO</div>
-
-        <div class="slider-row">
-          <div class="slider-label">
-            <span>Tamanho da fonte</span>
-            <span id="fontSizeValue" class="slider-value">14</span>
-          </div>
-          <input id="fontSizeSlider" type="range" min="10" max="22" step="1" value="14">
+        <div class="sub-tabs">
+          <button class="sub-tab active" type="button" data-subtab="tipografia">Tipografia</button>
+          <button class="sub-tab" type="button" data-subtab="espacamento">Espaço</button>
+          <button class="sub-tab" type="button" data-subtab="forma">Forma</button>
+          <button class="sub-tab" type="button" data-subtab="movimento">Movimento</button>
         </div>
 
-        <div class="slider-row">
-          <div class="slider-label">
-            <span>Espessura das linhas</span>
-            <span id="lineThicknessValue" class="slider-value">1.4</span>
+        <!-- TIPOGRAFIA (dos blocos — a fonte da anotação continua fixa) -->
+        <div class="sub-view active" data-subview="nos:tipografia">
+          <div class="select-row">
+            <span>Fonte dos blocos</span>
+            <select id="fontFamilySelect">
+              <option value="default">Padrão</option>
+              <option value="serif">Serifada</option>
+              <option value="mono">Monoespaçada</option>
+              <option value="rounded">Arredondada</option>
+            </select>
           </div>
-          <input id="lineThicknessSlider" type="range" min="1" max="4" step=".2" value="1.4">
+
+          <label class="toggle-row">
+            <span>Título em maiúsculas (fonte de destaque)</span>
+            <input id="titleUppercaseToggle" type="checkbox">
+            <span class="toggle-switch"></span>
+          </label>
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <span>Tamanho da fonte</span>
+              <span id="fontSizeValue" class="slider-value">14</span>
+            </div>
+            <input id="fontSizeSlider" type="range" min="10" max="22" step="1" value="14">
+          </div>
+
+          <label class="toggle-row">
+            <span>Permitir quebrar linha no título</span>
+            <input id="titleWrapToggle" type="checkbox">
+            <span class="toggle-switch"></span>
+          </label>
+
+          <div id="titleMaxLinesRow" class="slider-row" hidden>
+            <div class="slider-label">
+              <span>Máximo de linhas</span>
+              <span id="titleMaxLinesValue" class="slider-value">2</span>
+            </div>
+            <input id="titleMaxLinesSlider" type="range" min="1" max="3" step="1" value="2">
+          </div>
         </div>
 
-        <div class="slider-row">
-          <div class="slider-label">
-            <span>Espaçamento entre nós</span>
-            <span id="spacingValue" class="slider-value">60</span>
+        <!-- ESPAÇAMENTO -->
+        <div class="sub-view" data-subview="nos:espacamento">
+          <div class="slider-row">
+            <div class="slider-label">
+              <span>Espaçamento entre nós</span>
+              <span id="spacingValue" class="slider-value">60</span>
+            </div>
+            <input id="spacingSlider" type="range" min="30" max="110" step="5" value="60">
           </div>
-          <input id="spacingSlider" type="range" min="30" max="110" step="5" value="60">
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <span>Espaço do nó até a linha</span>
+              <span id="lineGapValue" class="slider-value">14</span>
+            </div>
+            <input id="lineGapSlider" type="range" min="4" max="30" step="2" value="14">
+          </div>
         </div>
 
-        <div class="panel-subtitle">FORMA DOS BLOCOS</div>
-
-        <div class="slider-row">
-          <div class="slider-label">
-            <span>Largura do bloco</span>
-            <span id="nodeWidthValue" class="slider-value">190</span>
+        <!-- FORMA -->
+        <div class="sub-view" data-subview="nos:forma">
+          <div class="slider-row">
+            <div class="slider-label">
+              <span>Largura do bloco</span>
+              <span id="nodeWidthValue" class="slider-value">190</span>
+            </div>
+            <input id="nodeWidthSlider" type="range" min="130" max="280" step="10" value="190">
           </div>
-          <input id="nodeWidthSlider" type="range" min="130" max="280" step="10" value="190">
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <span>Altura do bloco</span>
+              <span id="nodeHeightValue" class="slider-value">82</span>
+            </div>
+            <input id="nodeHeightSlider" type="range" min="60" max="160" step="10" value="82">
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <span>Arredondamento das bordas</span>
+              <span id="nodeRadiusValue" class="slider-value">0</span>
+            </div>
+            <input id="nodeRadiusSlider" type="range" min="0" max="40" step="2" value="0">
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <span>Espessura das linhas</span>
+              <span id="lineThicknessValue" class="slider-value">1.4</span>
+            </div>
+            <input id="lineThicknessSlider" type="range" min="1" max="4" step=".2" value="1.4">
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <span>Transparência dos não selecionados</span>
+              <span id="dimmedOpacityValue" class="slider-value">90</span>
+            </div>
+            <input id="dimmedOpacitySlider" type="range" min="40" max="100" step="5" value="90">
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <span>Brilho dos selecionados</span>
+              <span id="selectedGlowValue" class="slider-value">60</span>
+            </div>
+            <input id="selectedGlowSlider" type="range" min="0" max="100" step="10" value="60">
+          </div>
+
+          <label class="toggle-row">
+            <span>Cantos decorativos (L)</span>
+            <input id="showCornersToggle" type="checkbox" checked>
+            <span class="toggle-switch"></span>
+          </label>
         </div>
 
-        <div class="slider-row">
-          <div class="slider-label">
-            <span>Arredondamento das bordas</span>
-            <span id="nodeRadiusValue" class="slider-value">0</span>
+        <!-- MOVIMENTO -->
+        <div class="sub-view" data-subview="nos:movimento">
+          <label class="toggle-row">
+            <span>Blocos se movem</span>
+            <input id="wobbleEnabledToggle" type="checkbox" checked>
+            <span class="toggle-switch"></span>
+          </label>
+
+          <div id="wobbleOptions">
+            <div class="slider-row">
+              <div class="slider-label">
+                <span>Intensidade do movimento</span>
+                <span id="wobbleIntensityValue" class="slider-value">100</span>
+              </div>
+              <input id="wobbleIntensitySlider" type="range" min="0" max="150" step="10" value="100">
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-label">
+                <span>Velocidade do movimento</span>
+                <span id="wobbleSpeedValue" class="slider-value">100</span>
+              </div>
+              <input id="wobbleSpeedSlider" type="range" min="0" max="200" step="10" value="100">
+            </div>
+
+            <div class="select-row">
+              <span>Padrão do movimento</span>
+              <select id="wobblePatternSelect">
+                <option value="circular">Circular</option>
+                <option value="infinity">Infinito (8)</option>
+              </select>
+            </div>
           </div>
-          <input id="nodeRadiusSlider" type="range" min="0" max="40" step="2" value="0">
         </div>
-
-        <div class="slider-row">
-          <div class="slider-label">
-            <span>Transparência dos não selecionados</span>
-            <span id="dimmedOpacityValue" class="slider-value">90</span>
-          </div>
-          <input id="dimmedOpacitySlider" type="range" min="40" max="100" step="5" value="90">
-        </div>
-
-        <div class="panel-subtitle">MOVIMENTO</div>
-
-        <div class="slider-row">
-          <div class="slider-label">
-            <span>Intensidade do movimento</span>
-            <span id="wobbleIntensityValue" class="slider-value">100</span>
-          </div>
-          <input id="wobbleIntensitySlider" type="range" min="0" max="150" step="10" value="100">
-        </div>
-
-        <div class="slider-row">
-          <div class="slider-label">
-            <span>Velocidade do movimento</span>
-            <span id="wobbleSpeedValue" class="slider-value">100</span>
-          </div>
-          <input id="wobbleSpeedSlider" type="range" min="0" max="200" step="10" value="100">
-        </div>
-
-        <label class="toggle-row">
-          <span>Cantos decorativos</span>
-          <input id="showCornersToggle" type="checkbox" checked>
-          <span class="toggle-switch"></span>
-        </label>
       </section>
 
       <!-- ATALHOS -->
@@ -186,7 +293,7 @@
     </div>
 
     <div id="panelFooter">
-      <span id="panelVersion">v2.13</span>
+      <span id="panelVersion">v3.0.1</span>
       <button id="panelHelpBtn" class="icon-button" title="Log de atualizações">?</button>
     </div>
   </aside>
@@ -289,6 +396,72 @@
       ></div>
     </div>
   </aside>
+
+  <!-- =========================================================
+       JANELA DE MAPAS (abre ao clicar no selo do mapa atual)
+       ========================================================= -->
+  <div id="mapsModal" class="dialog-overlay" hidden>
+    <div class="maps-modal-box" role="dialog" aria-modal="true">
+      <div class="maps-modal-header">
+        <span>Mapas mentais</span>
+        <button type="button" id="mapsModalCloseBtn" class="icon-button" title="Fechar">×</button>
+      </div>
+
+      <div class="maps-modal-body">
+        <div class="maps-modal-list">
+          <input id="mapSearchInput" type="text" placeholder="Buscar mapa..." spellcheck="false">
+
+          <div id="mapsList"></div>
+
+          <button id="newMapBtn" class="wide-button">+ Novo mapa mental</button>
+
+          <div class="map-action-row">
+            <button id="exportMapBtn" title="Exportar o mapa atual (.md)">Exportar</button>
+            <button id="importMapBtn" title="Importar um mapa novo (.md)">Importar</button>
+          </div>
+        </div>
+
+        <div class="maps-modal-edit">
+          <div class="panel-subtitle">EDITAR MAPA</div>
+
+          <div id="mapEditEmpty" class="panel-empty" hidden>Nenhum mapa selecionado.</div>
+
+          <div id="mapEditBody">
+            <div id="mapEditPreview">
+              <span id="mapEditDot"></span>
+              <img id="mapEditImage" alt="" hidden>
+            </div>
+
+            <div class="map-edit-row">
+              <span>Cor</span>
+              <div id="mapEditColorSwatches"></div>
+            </div>
+
+            <div class="map-edit-row">
+              <span>Imagem</span>
+              <div class="map-edit-image-actions">
+                <button id="mapEditUploadBtn" type="button">Escolher…</button>
+                <button id="mapEditRemoveImageBtn" type="button">Remover</button>
+              </div>
+            </div>
+
+            <div class="map-edit-row">
+              <span>Ordem</span>
+              <div class="map-edit-image-actions">
+                <button id="mapEditMoveUpBtn" type="button" title="Mover pra cima">↑</button>
+                <button id="mapEditMoveDownBtn" type="button" title="Mover pra baixo">↓</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="maps-modal-footer">
+        <button id="mapDeleteBtn" type="button">Excluir mapa</button>
+        <button id="mapGoBtn" type="button" class="primary">Ir para este mapa</button>
+      </div>
+    </div>
+  </div>
 
   <button id="openNotesFloatingBtn" class="floating-notes-button" title="Abrir anotações">✎</button>
 

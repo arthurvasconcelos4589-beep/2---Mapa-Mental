@@ -1,56 +1,42 @@
-# Mapa de Anotações
+# Mapa Mental
 
-Projeto pessoal de anotações visuais.
+Aplicativo web de anotações visuais em forma de mapa mental. Feito só com HTML, CSS e JavaScript puro: sem Node, sem bibliotecas e sem build.
+
+## Como abrir
+
+1. Abra a pasta do projeto no VSCode.
+2. Com a extensão **Live Server** instalada, clique com o botão direito no `index.html` e escolha **Open with Live Server**.
+
+## Onde ficam os dados
+
+Tudo é salvo automaticamente no `localStorage` do navegador (chave `mapa-anotacoes-v4`). Os dados ficam no navegador e no endereço usados para abrir o app: trocar de navegador ou de porta do Live Server mostra um app vazio. Use Exportar/Importar (.md) para levar mapas de um lugar para outro.
 
 ## Estrutura
 
 ```text
-mapa_anotacoes_vscode/
-├── index.html
-├── assets/
+├── index.html              estrutura da página
 ├── css/
-│   ├── base.css
-│   ├── board.css
-│   ├── nodes.css
-│   ├── sidebar.css
-│   └── toolbar.css
+│   ├── base.css            variáveis e estilos gerais
+│   ├── themes.css          temas de cor
+│   ├── board.css           área do mapa e conexões
+│   ├── nodes.css           blocos
+│   ├── sidebar-left.css    painel de configurações (esquerda)
+│   ├── sidebar-right.css   painel de anotação (direita)
+│   ├── toolbar.css         barra de ferramentas do mapa
+│   ├── dialog.css          diálogos, log de atualizações e janela de mapas
+│   └── sidebar.css         (arquivo antigo, não é carregado pelo index.html)
 └── js/
-    ├── app.js
-    ├── core/
-    │   └── state.js
-    ├── graph/
-    │   ├── geometry.js
-    │   └── connections.js
-    ├── storage/
-    │   └── storage.js
-    └── ui/
-        ├── nodes.js
-        ├── sidebar.js
-        └── toolbar.js
+    ├── app.js              inicialização e loop principal
+    ├── core/               state.js (estado), history.js (desfazer/refazer)
+    ├── graph/              geometry.js, connections.js, layout.js
+    ├── storage/            storage.js (salvamento no navegador)
+    └── ui/                 blocos, painéis, temas, atalhos, zoom, mapas,
+                            importação/exportação, editor de anotação,
+                            diálogos e changelog.js (log de atualizações)
 ```
-
-## Como abrir
-
-1. Abra esta pasta no VSCode.
-2. Abra `index.html`.
-3. Recomenda-se usar a extensão **Live Server** para desenvolvimento.
-4. Clique com o botão direito em `index.html` → **Open with Live Server**.
-
-Não é necessário instalar Node.js para esta versão.
 
 ## Organização do código
 
-- `index.html`: apenas estrutura da página.
-- `css/`: estilos, separados por área.
-- `js/core/state.js`: estado e dados iniciais.
-- `js/graph/geometry.js`: cálculo geométrico das linhas.
-- `js/graph/connections.js`: desenho das conexões.
-- `js/storage/storage.js`: salvamento no navegador.
-- `js/ui/nodes.js`: blocos, animação, criação e exclusão.
-- `js/ui/sidebar.js`: painel de anotações.
-- `js/ui/toolbar.js`: botões e conexões manuais.
-- `js/app.js`: inicialização e loop principal.
-
-## Observação
-
-As anotações são salvas no `localStorage` do navegador. Portanto, nesta versão os dados ficam no navegador/computador onde o site foi usado.
+- Os scripts são carregados na ordem do `index.html`, sem módulos: funções de um arquivo são visíveis nos outros, mas só depois de ele ser carregado. Código que roda na hora da carga não deve chamar funções de arquivos que vêm depois.
+- A versão do app e o log de atualizações ficam em `js/ui/changelog.js`.
+- Mapas: o selo do mapa atual (barra lateral esquerda) abre a janela de mapas (`js/ui/maps.js`), onde dá para trocar, criar, excluir, importar, exportar, reordenar e mudar cor ou imagem.

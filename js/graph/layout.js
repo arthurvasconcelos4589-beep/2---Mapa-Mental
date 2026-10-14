@@ -296,6 +296,44 @@ function renderLayoutTab() {
     orderToggle.checked = !!(
       map && map.showOrderNumbers
     );
+
+    document.getElementById(
+      "orderNumberOptions"
+    ).hidden = !orderToggle.checked;
+  }
+
+  const borderToggle =
+    document.getElementById(
+      "orderNumberBorderToggle"
+    );
+
+  const editableToggle =
+    document.getElementById(
+      "orderNumberEditableToggle"
+    );
+
+  const sizeSlider =
+    document.getElementById(
+      "orderNumberSizeSlider"
+    );
+
+  const sizeValue =
+    document.getElementById(
+      "orderNumberSizeValue"
+    );
+
+  if (map) {
+    borderToggle.checked =
+      map.orderNumberBorder !== false;
+
+    editableToggle.checked =
+      map.orderNumberEditable !== false;
+
+    sizeSlider.value =
+      map.orderNumberSize ?? 18;
+
+    sizeValue.textContent =
+      sizeSlider.value;
   }
 }
 
@@ -317,7 +355,79 @@ function bindLayoutToggle() {
       map.showOrderNumbers =
         orderToggle.checked;
 
+      document.getElementById(
+        "orderNumberOptions"
+      ).hidden =
+        !orderToggle.checked;
+
       touchMapEdited();
+      render();
+      saveData(false);
+    }
+  );
+
+  document
+    .getElementById(
+      "orderNumberBorderToggle"
+    )
+    .addEventListener(
+      "change",
+      event => {
+        const map = currentMap();
+
+        if (!map) return;
+
+        map.orderNumberBorder =
+          event.target.checked;
+
+        touchMapEdited();
+        render();
+        saveData(false);
+      }
+    );
+
+  document
+    .getElementById(
+      "orderNumberEditableToggle"
+    )
+    .addEventListener(
+      "change",
+      event => {
+        const map = currentMap();
+
+        if (!map) return;
+
+        map.orderNumberEditable =
+          event.target.checked;
+
+        touchMapEdited();
+        saveData(false);
+      }
+    );
+
+  const sizeSlider =
+    document.getElementById(
+      "orderNumberSizeSlider"
+    );
+
+  sizeSlider.addEventListener(
+    "input",
+    () => {
+      const map = currentMap();
+
+      if (!map) return;
+
+      map.orderNumberSize = Number(
+        sizeSlider.value
+      );
+
+      document.getElementById(
+        "orderNumberSizeValue"
+      ).textContent =
+        sizeSlider.value;
+
+      touchMapEdited();
+      render();
       saveData(false);
     }
   );

@@ -41,6 +41,8 @@ const AppState = {
       id,
       name,
       color,
+      image: null,
+      sortIndex: this.mapColorIndex,
 
       zoom: 1,
       panX: 0,
@@ -50,16 +52,38 @@ const AppState = {
         Configurações visuais do mapa.
       */
       layout: "radial",
+
+      /* Layout > Numeração de conexões */
+      showOrderNumbers: false,
+      orderNumberBorder: true,
+      orderNumberEditable: true,
+      orderNumberSize: 18,
+
+      /* Estilização > Tipografia (dos BLOCOS, não da anotação) */
       fontSize: 14,
-      lineThickness: 1.4,
+      fontFamily: "default",
+      titleUppercase: false,
+      titleWrap: false,
+      titleMaxLines: 2,
+
+      /* Estilização > Espaçamento */
       nodeSpacing: 60,
+      lineGap: 14,
+
+      /* Estilização > Forma de blocos e linhas */
       nodeWidth: 190,
+      nodeHeight: 82,
       nodeRadius: 0,
+      lineThickness: 1.4,
       dimmedOpacity: 90,
+      selectedGlow: 60,
       showCorners: true,
+
+      /* Estilização > Movimento */
+      wobbleEnabled: true,
       wobbleIntensity: 100,
       wobbleSpeed: 100,
-      showOrderNumbers: false,
+      wobblePattern: "circular",
 
       createdAt: Date.now(),
       lastEditedAt: Date.now(),
@@ -151,6 +175,19 @@ function isVisible(node) {
   return (
     parent.childrenOpen === true &&
     isVisible(parent)
+  );
+}
+
+/*
+  Mapas antigos (salvos antes da reordenação) não têm
+  sortIndex — tratamos como 0 e a ordem original
+  (a de criação) é preservada como veio.
+*/
+function getSortedMaps() {
+  return [...AppState.maps].sort(
+    (a, b) =>
+      (a.sortIndex ?? 0) -
+      (b.sortIndex ?? 0)
   );
 }
 

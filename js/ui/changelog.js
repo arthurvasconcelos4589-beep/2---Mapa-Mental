@@ -2,17 +2,44 @@
    LOG DE ATUALIZAÇÕES
    ============================================================ */
 
-const APP_VERSION = "v2.13";
+const APP_VERSION = "v3.0.1";
 
 const UPDATE_LOG = [
   {
-    version: "v2.13",
+    version: "v3.0.1",
+    changes: [
+      "Corrigido: o botão Excluir da barra superior não fazia nada. Os botões de exportar e importar bloco estavam travados pelo mesmo motivo — agora os três funcionam",
+      "Corrigido: os números de ordem nas conexões agora acompanham o zoom — encolhem e crescem junto com o mapa, em vez de ficarem enormes quando você afasta a câmera",
+      "Os mapas agora abrem numa janela no meio da tela: clique no selo do mapa atual (barra lateral) pra ver a lista com busca, criar, importar e exportar mapa, mudar cor, imagem e ordem, e excluir (com confirmação). Clique num mapa pra selecioná-lo e use \"Ir para este mapa\" pra trocar — a janela fecha sozinha. O atalho Ctrl+K também abre essa janela com a busca pronta",
+      "O selo do mapa atual na barra lateral agora só mostra o mapa em que você está e abre essa janela (o menu que abria dentro da barra lateral foi removido)",
+      "Todas as versões do log agora têm 3 números (ex.: v2.1 virou v2.1.0 e v2.11 virou v2.1.1)"
+    ]
+  },
+  {
+    version: "v3.0.0",
+    changes: [
+      "Painel de configurações reformulado por completo",
+      "A aba Mapas virou o próprio selo do mapa atual: clique nele pra trocar de mapa, criar, excluir, importar, exportar, reordenar e mudar a cor ou colocar uma imagem",
+      "Agora são só 4 abas principais: Tema, Layout, Estilo e Atalhos",
+      "Nova barra de sub-abas dentro de cada aba principal, organizando tudo em seções",
+      "Tema dividido em Temas Escuros / Temas Claros",
+      "Layout dividido em Ordem (os 5 estilos) e Numeração — que agora tem borda do número, permitir renumerar e tamanho do número, só aparecendo quando a numeração está ativada",
+      "\"Nós\" virou \"Estilo\", com 4 sub-abas: Tipografia, Espaçamento, Forma e Movimento",
+      "Tipografia: fonte dos blocos (Padrão/Serifada/Monoespaçada/Arredondada), título em maiúsculas com fonte de destaque, tamanho da fonte, e quebra de linha no título (até 3 linhas)",
+      "Espaçamento: entre nós e do nó até a linha de conexão",
+      "Forma: largura E altura do bloco separadas, bordas redondas (os cantos decorativos agora acompanham o arredondamento), espessura de linha, transparência, e um novo brilho regulável nos selecionados",
+      "Movimento: interruptor geral pra ligar/desligar, e um novo padrão de movimento (Circular ou Infinito/8)",
+      "Atalhos continua como estava"
+    ]
+  },
+  {
+    version: "v2.1.3",
     changes: [
       "Corrigido: números de ordem (e as linhas) ficavam escondidos atrás dos blocos — principalmente perto do bloco central, por ele ser maior. Agora as conexões sempre ficam visíveis por cima de qualquer bloco, em qualquer nível"
     ]
   },
   {
-    version: "v2.12",
+    version: "v2.1.2",
     changes: [
       "Paletas de cor redesenhadas: cada uma das 8 posições agora tem um papel fixo (Destaque, Atenção/Erro, Sucesso, Aviso, Informação, Especial, Técnico, Secundário) — o mouse sobre a cor mostra esse nome. Trocar de tema muda o tom, mas o sentido de cada cor se mantém",
       "Botões de exportar/importar bloco na barra de ferramentas viraram ícones compactos (evita quebrar em telas menores)",
@@ -21,13 +48,13 @@ const UPDATE_LOG = [
     ]
   },
   {
-    version: "v2.11",
+    version: "v2.1.1",
     changes: [
       "Corrigido: apertar Enter dentro de um bloco de destaque (markdown) estava cortando em outro bloco separado, deixando uma linha estranha no meio da caixa. Agora Enter só quebra a linha e continua no mesmo bloco"
     ]
   },
   {
-    version: "v2.1",
+    version: "v2.1.0",
     changes: [
       "Números de ordem nas conexões: ative em Layout > \"Numerar conexões\", clique no número pra trocar. Os layouts Radial e Árvore H/V agora organizam os blocos seguindo essa sequência — ótimo pra ensinar passo a passo",
       "Área de anotações 40px mais larga",
@@ -37,7 +64,7 @@ const UPDATE_LOG = [
     ]
   },
   {
-    version: "v2.04",
+    version: "v2.0.4",
     changes: [
       "Novos botões \"Importar\" (bloco selecionado) na barra de ferramentas e \"Importar mapa (.md)\" na aba Mapas",
       "A importação lê o mesmo formato que a exportação gera: os títulos (#, ##, ###...) viram a hierarquia de blocos de novo, e negrito/itálico/sublinhado/código/blocos de destaque voltam a ser formatação de verdade",
@@ -45,25 +72,25 @@ const UPDATE_LOG = [
     ]
   },
   {
-    version: "v2.03",
+    version: "v2.0.3",
     changes: [
       "Criação de bloco inteligente: ao clicar em \"+ Bloco\", o próximo clique no mapa decide onde ele nasce (Esc cancela)",
       "Cores da anotação agora são por posição na paleta, não por valor fixo — se você trocar de tema, o texto já colorido acompanha a cor que estiver naquele mesmo lugar na nova paleta",
-      "Adicionada a versão v2.0 que estava faltando no Update Log",
+      "Adicionada a versão v2.0.0 que estava faltando no Update Log",
       "Descrições removidas da lista de temas — só o nome agora",
       "Botão \"Restaurar atalhos padrão\" corrigido — tinha uma regra de CSS conflitante deixando ele mais largo que o painel",
       "Novos botões: \"Exportar\" (bloco selecionado) na barra de ferramentas, e \"Exportar mapa atual\" na aba Mapas — geram um arquivo .md legível, com a anotação convertida pra markdown"
     ]
   },
   {
-    version: "v2.02",
+    version: "v2.0.2",
     changes: [
       "Corrigido bug grave: afastar muito o zoom espalhava e quebrava os blocos e as linhas. A causa era o sistema que afasta blocos sobrepostos, que amplificava demais a correção em zooms bem baixos — agora ele roda em coordenadas independentes de zoom",
       "Nova seção \"Movimento\" na aba Nós: intensidade do balanço dos blocos (0 = totalmente parado) e velocidade separadamente"
     ]
   },
   {
-    version: "v2.01",
+    version: "v2.0.1",
     changes: [
       "Botões da barra de anotação agora centralizados, sem espaço sobrando do lado",
       "Botão de limpar formatação saiu da barra e virou atalho de teclado (Ctrl+\\, remapeável na aba Atalhos)",
@@ -72,7 +99,7 @@ const UPDATE_LOG = [
     ]
   },
   {
-    version: "v2.0",
+    version: "v2.0.0",
     changes: [
       "Editor de anotações totalmente novo: negrito, itálico, sublinhado e código em linha",
       "Cor de texto com paleta própria por tema (Dracula usa as cores de sintaxe do VSCode, Jarvis usa tons de azul/ciano, e assim por diante)",
@@ -86,27 +113,27 @@ const UPDATE_LOG = [
     ]
   },
   {
-    version: "v1.14",
+    version: "v1.1.4",
     changes: [
       "Painel do log de atualizações agora tem tamanho fixo, não muda mais conforme o texto",
       "Scrollbars do log com um respiro do texto, sem encostar"
     ]
   },
   {
-    version: "v1.13",
+    version: "v1.1.3",
     changes: [
       "Log de atualizações redesenhado: lista de versões do lado, clique numa pra ver o que mudou nela"
     ]
   },
   {
-    version: "v1.12",
+    version: "v1.1.2",
     changes: [
       "Linhas de conexão agora acompanham o mapa durante o arrasto da tela vazia (e também ao arrastar um bloco)",
       "Scrollbars agora seguem a cor do tema atual"
     ]
   },
   {
-    version: "v1.11",
+    version: "v1.1.1",
     changes: [
       "Site otimizado: blocos e linhas agora usam propriedades CSS compostas (mais leve, sem travar a página)",
       "Mapa fica parado (não estica/encolhe mais) ao abrir ou fechar as abas laterais",
@@ -117,7 +144,7 @@ const UPDATE_LOG = [
     ]
   },
   {
-    version: "v1.1",
+    version: "v1.1.0",
     changes: [
       "Tema Jarvis redesenhado — agora escuro, estilo HUD do Homem de Ferro",
       "Temas reorganizados: 4 escuros (Dark Modern, Dracula, Ultron, Jarvis) e 2 claros (Light Modern, Creme com Marrom)",
@@ -131,7 +158,7 @@ const UPDATE_LOG = [
     ]
   },
   {
-    version: "v1.0",
+    version: "v1.0.0",
     changes: [
       "Lançamento do painel de configurações: mapas, temas, layouts, tipografia e atalhos"
     ]

@@ -6,7 +6,7 @@
   position: absolute;
   z-index: 5;
   width: var(--node-width, 190px);
-  min-height: 82px;
+  min-height: var(--node-height, 82px);
   padding: 18px 22px;
 
   display: flex;
@@ -18,6 +18,7 @@
   border-radius: var(--node-radius, 0px);
   background: var(--node-bg);
   color: var(--node-text);
+  font-family: var(--node-font-family, inherit);
 
   cursor: grab;
   user-select: none;
@@ -34,22 +35,29 @@
     background-color .2s ease,
     color .2s ease,
     width .15s ease,
+    min-height .15s ease,
     border-radius .15s ease;
 }
 
 .node.large {
   width: calc(var(--node-width, 190px) * 1.58);
-  min-height: 125px;
+  min-height: calc(var(--node-height, 82px) * 1.52);
   padding: 25px 30px;
 }
 
+/*
+  Os cantos decorativos (L) acompanham o mesmo
+  arredondamento do bloco — se a borda fica redonda,
+  o L fica redondo junto.
+*/
 .node::before,
 .node::after {
   content: "";
   position: absolute;
   pointer-events: none;
   opacity: var(--corners-opacity, 1);
-  transition: opacity .15s ease;
+  border-radius: var(--node-radius, 0px);
+  transition: opacity .15s ease, border-radius .15s ease;
 }
 
 .node::before {
@@ -71,12 +79,12 @@
 }
 
 /*
-  Selecionado: efeito suave, sem escândalo.
-  Só um contorno mais claro e um brilho discreto.
+  Selecionado: efeito suave, sem escândalo — e o brilho
+  agora é regulável (0 desliga completamente).
 */
 .node.selected {
   border-color: var(--accent);
-  box-shadow: 0 0 10px var(--accent-soft);
+  box-shadow: 0 0 calc(16px * var(--node-selected-glow, .6)) var(--accent-soft);
   transform: translate(-50%, -50%) scale(1.02);
 }
 
@@ -98,9 +106,15 @@
   font-weight: 650;
   letter-spacing: .24em;
   font-size: var(--node-font-size, 14px);
-  white-space: nowrap;
+  text-transform: var(--title-transform, none);
+
+  white-space: var(--title-white-space, nowrap);
   overflow: hidden;
   text-overflow: ellipsis;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--title-max-lines, 1);
 }
 
 .large .title {

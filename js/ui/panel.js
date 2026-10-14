@@ -1,9 +1,8 @@
 /* ============================================================
-   ABAS DO PAINEL ESQUERDO
+   ABAS DO PAINEL ESQUERDO (E SUB-ABAS)
    ============================================================ */
 
 const PANEL_TABS = [
-  "mapas",
   "tema",
   "layout",
   "nos",
@@ -42,6 +41,59 @@ function switchPanelTab(tab) {
   if (tab === "atalhos") renderShortcutsTab();
 }
 
+/*
+  Sub-abas: cada .panel-view pode ter sua própria barrinha
+  (.sub-tabs) com vários (.sub-view). Funciona igual pra
+  qualquer seção, sem precisar de código específico por aba.
+*/
+function switchSubTab(panelView, subtab) {
+  panelView
+    .querySelectorAll(".sub-tab")
+    .forEach(btn => {
+      btn.classList.toggle(
+        "active",
+        btn.dataset.subtab === subtab
+      );
+    });
+
+  panelView
+    .querySelectorAll(".sub-view")
+    .forEach(view => {
+      const key =
+        view.dataset.subview.split(
+          ":"
+        )[1];
+
+      view.classList.toggle(
+        "active",
+        key === subtab
+      );
+    });
+}
+
+function bindSubTabs() {
+  document
+    .querySelectorAll(".sub-tab")
+    .forEach(btn => {
+      btn.addEventListener(
+        "click",
+        () => {
+          const panelView =
+            btn.closest(
+              ".panel-view"
+            );
+
+          if (panelView) {
+            switchSubTab(
+              panelView,
+              btn.dataset.subtab
+            );
+          }
+        }
+      );
+    });
+}
+
 function bindPanelTabs() {
   document
     .querySelectorAll(".panel-tab")
@@ -61,4 +113,6 @@ function bindPanelTabs() {
       "click",
       showUpdateLog
     );
+
+  bindSubTabs();
 }

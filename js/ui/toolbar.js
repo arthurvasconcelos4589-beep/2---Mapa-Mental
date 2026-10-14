@@ -13,19 +13,19 @@ document
   .getElementById("exportBlockBtn")
   .addEventListener(
     "click",
-    exportSelectedBlock
+    () => exportSelectedBlock()
   );
 
 document
   .getElementById("importBlockBtn")
   .addEventListener(
     "click",
-    importBlock
+    () => importBlock()
   );
 
 document
   .getElementById("deleteBtn")
   .addEventListener(
     "click",
-    deleteSelectedNode
-);
+    () => deleteSelectedNode()
+  );
