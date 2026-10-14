@@ -315,6 +315,7 @@ function animationLoop() {
 
 loadTheme();
 loadGridPreference();
+initZoomPreferences();
 loadShortcutOverrides();
 updateSidebarWidthVars();
 bindPanelTabs();

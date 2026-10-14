@@ -56,6 +56,13 @@ const SHORTCUT_DEFS = [
     run: () => centerView()
   },
   {
+    id: "focus-node",
+    label: "Focar no bloco",
+    defaultKey: "f",
+    context: "global",
+    run: () => focusSelectedNode()
+  },
+  {
     id: "focus-search",
     label: "Buscar mapa",
     defaultKey: "ctrl+k",

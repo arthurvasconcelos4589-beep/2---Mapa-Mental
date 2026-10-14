@@ -185,6 +185,17 @@
   padding: 7px 8px;
 }
 
+#zoomSensPopover {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  width: 220px;
+  padding: 12px 14px 0;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--panel);
+}
+
 #zoomValue {
   min-width: 48px;
   text-align: center;

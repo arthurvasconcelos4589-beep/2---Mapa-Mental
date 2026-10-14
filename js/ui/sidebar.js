@@ -105,6 +105,10 @@ function toggleNotesPanel() {
 
   updateSidebarWidthVars();
   resizeBoard();
+
+  if (!panel.classList.contains("closed")) {
+    autoFocusSelectedNode();
+  }
 }
 
 function openNotesPanel() {
@@ -121,4 +125,6 @@ function openNotesPanel() {
 
   updateSidebarWidthVars();
   resizeBoard();
+
+  autoFocusSelectedNode();
 }

@@ -4,12 +4,12 @@
 
 /*
   A área de trabalho é bem maior que a parte visível do
-  board — cada lado ganha 2x o tamanho da tela como margem
+  board — cada lado ganha 4x o tamanho da tela como margem
   extra, então dá pra arrastar bem para fora do que está
   visível sem esbarrar numa "parede". Combina com o zoom
   para navegar por um mapa bem mais espaçoso.
 */
-const WORLD_MARGIN_RATIO = 2;
+const WORLD_MARGIN_RATIO = 4;
 
 /*
   Cache id -> elemento DOM. Evita um document.querySelector
@@ -111,9 +111,10 @@ function selectNode(id) {
     Se clicar no filho, o filho permanece selecionado
     e os filhos dele podem ser abertos sem o pai sumir.
   */
-  if (
-    AppState.selectedId === id
-  ) {
+  const wasSelected =
+    AppState.selectedId === id;
+
+  if (wasSelected) {
     node.childrenOpen =
       !node.childrenOpen;
   }
@@ -122,6 +123,14 @@ function selectNode(id) {
 
   render();
   saveData(false);
+
+  /*
+    Só uma NOVA seleção dá zoom (clicar de novo no mesmo
+    bloco só abre/fecha os filhos).
+  */
+  if (!wasSelected) {
+    autoFocusSelectedNode();
+  }
 }
 
 function updatePositions() {

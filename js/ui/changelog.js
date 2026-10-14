@@ -2,9 +2,19 @@
    LOG DE ATUALIZAÇÕES
    ============================================================ */
 
-const APP_VERSION = "v3.0.1";
+const APP_VERSION = "v3.1.0";
 
 const UPDATE_LOG = [
+  {
+    version: "v3.1.0",
+    changes: [
+      "Zoom ao selecionar bloco: com a barra de anotação aberta, ao selecionar um bloco a câmera aproxima nele (zoom de 120%) e a barra de configurações fecha sozinha se estiver aberta. Se o bloco já estava selecionado e a anotação estava fechada, o zoom acontece quando você abrir a anotação. A câmera não fica presa: você pode mover ou dar zoom à vontade depois. Dá pra desativar em Estilo > Movimento > Zoom ao selecionar bloco",
+      "Novo atalho F (Focar no bloco): leva a câmera até o bloco selecionado com zoom de 120%, útil quando você já saiu do zoom. Funciona mesmo com o zoom automático desativado, e dá pra mudar a tecla na aba Atalhos",
+      "Sensibilidade do zoom: novo botão ao lado do zoom (canto inferior) com uma barra de 1% a 20% que define quanto cada giro da roda do mouse ou clique em − e + aproxima ou afasta. O padrão continua 5%",
+      "O zoom agora anda em passos de 1% (antes era de 5 em 5%), pra que a sensibilidade funcione com qualquer valor",
+      "Mais espaço para colocar blocos: a área de trabalho ficou bem maior e vai quase até o limite do zoom mais afastado"
+    ]
+  },
   {
     version: "v3.0.1",
     changes: [

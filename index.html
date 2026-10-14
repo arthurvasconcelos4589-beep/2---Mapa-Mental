@@ -249,6 +249,12 @@
         <!-- MOVIMENTO -->
         <div class="sub-view" data-subview="nos:movimento">
           <label class="toggle-row">
+            <span>Zoom ao selecionar bloco</span>
+            <input id="zoomOnSelectToggle" type="checkbox" checked>
+            <span class="toggle-switch"></span>
+          </label>
+
+          <label class="toggle-row">
             <span>Blocos se movem</span>
             <input id="wobbleEnabledToggle" type="checkbox" checked>
             <span class="toggle-switch"></span>
@@ -293,7 +299,7 @@
     </div>
 
     <div id="panelFooter">
-      <span id="panelVersion">v3.0.1</span>
+      <span id="panelVersion">v3.1.0</span>
       <button id="panelHelpBtn" class="icon-button" title="Log de atualizações">?</button>
     </div>
   </aside>
@@ -341,6 +347,19 @@
       <span id="zoomValue">100%</span>
       <button id="zoomInBtn" title="Aproximar">+</button>
       <button id="resetZoomBtn" title="Resetar zoom">100%</button>
+      <button id="zoomSensBtn" title="Sensibilidade do zoom">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h12"/><circle cx="5" cy="4" r="1.6" fill="var(--panel)"/><circle cx="11" cy="8" r="1.6" fill="var(--panel)"/><circle cx="6.5" cy="12" r="1.6" fill="var(--panel)"/></svg>
+      </button>
+
+      <div id="zoomSensPopover" hidden>
+        <div class="slider-row">
+          <div class="slider-label">
+            <span>Sensibilidade do zoom</span>
+            <span id="zoomSensValue" class="slider-value">5%</span>
+          </div>
+          <input id="zoomSensSlider" type="range" min="1" max="20" step="1" value="5">
+        </div>
+      </div>
     </div>
   </main>
 

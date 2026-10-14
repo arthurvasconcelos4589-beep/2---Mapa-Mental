@@ -4,7 +4,24 @@
 
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 7.5;
-const ZOOM_STEP = 0.05;
+
+/*
+  Quanto cada giro da roda do mouse (ou clique em − / +) muda
+  o zoom. É a "sensibilidade" ajustável na barra de zoom
+  (padrão 5%). Por isso é "let" e não "const".
+*/
+let ZOOM_STEP = 0.05;
+
+/* Zoom aplicado ao focar num bloco. */
+const FOCUS_ZOOM = 1.2;
+
+const ZOOM_SENSITIVITY_KEY =
+  "mapa-zoom-sensitivity";
+
+const ZOOM_ON_SELECT_KEY =
+  "mapa-zoom-on-select";
+
+let zoomOnSelectEnabled = true;
 
 /*
   O mapa tem um limite — enorme, mas não infinito (o mesmo
@@ -87,7 +104,7 @@ function setZoomAt(value, pivotX, pivotY) {
   const oldPanY = map.panY || 0;
 
   const newZoom = clamp(
-    Math.round(value * 20) / 20,
+    Math.round(value * 100) / 100,
     MIN_ZOOM,
     MAX_ZOOM
   );
@@ -308,4 +325,221 @@ function endBoardPan() {
     .classList.remove("panning");
 
   saveData(false);
+}
+
+/* ============================================================
+   FOCAR NO BLOCO SELECIONADO
+   ============================================================ */
+
+/*
+  Leva a câmera até o bloco selecionado, com zoom de 120%, e
+  fecha a barra de configurações (esquerda) se estiver aberta.
+  O bloco fica centralizado na área livre da tela (descontando
+  a barra de anotação, se estiver aberta). Não "prende": é só um
+  movimento — depois dele a câmera é sua de novo.
+*/
+function focusSelectedNode() {
+  const map = currentMap();
+
+  const node =
+    AppState.selectedId
+      ? getNode(AppState.selectedId)
+      : null;
+
+  if (!map || !node) return;
+
+  const mapsPanel =
+    document.getElementById(
+      "mapsPanel"
+    );
+
+  if (
+    !mapsPanel.classList.contains(
+      "closed"
+    )
+  ) {
+    mapsPanel.classList.add("closed");
+
+    updateSidebarWidthVars();
+    resizeBoard();
+  }
+
+  const board =
+    document
+      .getElementById("board")
+      .getBoundingClientRect();
+
+  const notesPanel =
+    document.getElementById(
+      "notesPanel"
+    );
+
+  const notesWidth =
+    notesPanel.classList.contains(
+      "closed"
+    )
+      ? 0
+      : notesPanel.offsetWidth;
+
+  const centerX =
+    (board.width - notesWidth) / 2;
+
+  const centerY =
+    board.height / 2;
+
+  map.zoom = FOCUS_ZOOM;
+
+  map.panX =
+    centerX -
+    node.x * board.width * FOCUS_ZOOM;
+
+  map.panY =
+    centerY -
+    node.y * board.height * FOCUS_ZOOM;
+
+  /*
+    O scroll do mouse deixa a transição desligada; aqui
+    queremos o movimento suave da câmera.
+  */
+  setZoomTransitionInstant(false);
+
+  updateZoomUI();
+  updatePositions();
+  drawConnections();
+  saveData(false);
+}
+
+/*
+  Zoom automático: só acontece com a barra de anotação aberta
+  e com a opção ligada (Estilo > Movimento).
+*/
+function autoFocusSelectedNode() {
+  if (!zoomOnSelectEnabled) return;
+
+  if (
+    document.body.classList.contains(
+      "notes-closed"
+    )
+  ) {
+    return;
+  }
+
+  focusSelectedNode();
+}
+
+/* ============================================================
+   PREFERÊNCIAS DE ZOOM (sensibilidade e zoom ao selecionar)
+   Valem pro app todo, não por mapa — ficam no navegador.
+   ============================================================ */
+
+function initZoomPreferences() {
+  const slider =
+    document.getElementById(
+      "zoomSensSlider"
+    );
+
+  const valueLabel =
+    document.getElementById(
+      "zoomSensValue"
+    );
+
+  const popover =
+    document.getElementById(
+      "zoomSensPopover"
+    );
+
+  const toggle =
+    document.getElementById(
+      "zoomOnSelectToggle"
+    );
+
+  function applySensitivity(
+    percent,
+    save
+  ) {
+    const value = clamp(
+      Math.round(percent),
+      1,
+      20
+    );
+
+    ZOOM_STEP = value / 100;
+
+    slider.value = value;
+    valueLabel.textContent =
+      `${value}%`;
+
+    if (save) {
+      localStorage.setItem(
+        ZOOM_SENSITIVITY_KEY,
+        String(value)
+      );
+    }
+  }
+
+  const savedSensitivity =
+    parseInt(
+      localStorage.getItem(
+        ZOOM_SENSITIVITY_KEY
+      ),
+      10
+    );
+
+  applySensitivity(
+    Number.isNaN(savedSensitivity)
+      ? 5
+      : savedSensitivity,
+    false
+  );
+
+  slider.addEventListener(
+    "input",
+    () =>
+      applySensitivity(
+        Number(slider.value),
+        true
+      )
+  );
+
+  /* Botão ao lado do zoom abre/fecha a barrinha. */
+  document
+    .getElementById("zoomSensBtn")
+    .addEventListener("click", () => {
+      popover.hidden = !popover.hidden;
+    });
+
+  document.addEventListener(
+    "pointerdown",
+    event => {
+      if (
+        !popover.hidden &&
+        !event.target.closest(
+          "#zoomControls"
+        )
+      ) {
+        popover.hidden = true;
+      }
+    }
+  );
+
+  zoomOnSelectEnabled =
+    localStorage.getItem(
+      ZOOM_ON_SELECT_KEY
+    ) !== "0";
+
+  toggle.checked =
+    zoomOnSelectEnabled;
+
+  toggle.addEventListener(
+    "change",
+    () => {
+      zoomOnSelectEnabled =
+        toggle.checked;
+
+      localStorage.setItem(
+        ZOOM_ON_SELECT_KEY,
+        zoomOnSelectEnabled ? "1" : "0"
+      );
+    }
+  );
 }
