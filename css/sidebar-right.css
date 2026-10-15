@@ -239,6 +239,29 @@ code.note-inline-code {
 }
 
 /*
+  Link para outro bloco ([[nome]]): os colchetes são só visuais
+  (não fazem parte do texto); clicar leva até o bloco.
+*/
+.note-link {
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent-soft);
+  cursor: pointer;
+}
+
+.note-link::before,
+.note-link::after {
+  opacity: .55;
+}
+
+.note-link::before {
+  content: "[[";
+}
+
+.note-link::after {
+  content: "]]";
+}
+
+/*
   Cores por ÍNDICE na paleta, não por valor fixo — usam a
   variável CSS do tema atual, então se o tema mudar, o
   texto já colorido acompanha automaticamente a cor que

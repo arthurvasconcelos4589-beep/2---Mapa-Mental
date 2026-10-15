@@ -133,6 +133,77 @@ function insertInlineCode() {
   triggerNoteSave();
 }
 
+/*
+  Link para outro bloco: o trecho vira [[nome]] e, ao clicar,
+  leva até o bloco com esse nome. Com texto selecionado, ele vira
+  o link; sem seleção, entra um texto de exemplo já selecionado,
+  pra você digitar o nome por cima.
+*/
+function insertNoteLink() {
+  const editor = getNoteEditor();
+
+  editor.focus();
+
+  const selection =
+    window.getSelection();
+
+  if (!selection.rangeCount) return;
+
+  const range =
+    selection.getRangeAt(0);
+
+  if (
+    !editor.contains(
+      range.commonAncestorContainer
+    )
+  ) {
+    return;
+  }
+
+  const link =
+    document.createElement("span");
+
+  link.className = "note-link";
+
+  if (range.collapsed) {
+    link.textContent = "nome do bloco";
+    range.insertNode(link);
+  } else {
+    try {
+      range.surroundContents(link);
+    } catch (error) {
+      /* Seleção cruza mais de um elemento — ignora. */
+      return;
+    }
+  }
+
+  /*
+    Se o link ficou no fim da linha, um espaço depois dele
+    garante que dá pra continuar escrevendo fora dele (tem que
+    ser espaço não separável: um comum o navegador descarta).
+  */
+  if (!link.nextSibling) {
+    link.after(
+      document.createTextNode("\u00A0")
+    );
+  }
+
+  const after =
+    document.createRange();
+
+  if (range.collapsed || link.textContent === "nome do bloco") {
+    after.selectNodeContents(link);
+  } else {
+    after.setStartAfter(link);
+    after.collapse(true);
+  }
+
+  selection.removeAllRanges();
+  selection.addRange(after);
+
+  triggerNoteSave();
+}
+
 function clearNoteFormatting() {
   getNoteEditor().focus();
   document.execCommand("removeFormat");
@@ -615,6 +686,123 @@ function bindNoteToolbar() {
       "click",
       insertInlineCode
     );
+
+  document
+    .getElementById("noteLinkBtn")
+    .addEventListener(
+      "click",
+      insertNoteLink
+    );
+
+  /* Clique num link leva até o bloco. */
+  getNoteEditor().addEventListener(
+    "click",
+    event => {
+      const link =
+        event.target.closest(
+          ".note-link"
+        );
+
+      if (link) {
+        goToLinkedBlock(link.textContent);
+      }
+    }
+  );
+
+  /*
+    Seta → no fim do link leva o cursor pra fora dele. Sem isso
+    o navegador continua "dentro" do link e o texto seguinte
+    viraria parte do nome.
+  */
+  getNoteEditor().addEventListener(
+    "keydown",
+    event => {
+      if (
+        event.key !== "ArrowRight" ||
+        event.shiftKey ||
+        event.ctrlKey ||
+        event.altKey ||
+        event.metaKey
+      ) {
+        return;
+      }
+
+      const selection =
+        window.getSelection();
+
+      if (
+        !selection.rangeCount ||
+        !selection.isCollapsed
+      ) {
+        return;
+      }
+
+      const anchor = selection.anchorNode;
+
+      const link = (
+        anchor.nodeType === Node.TEXT_NODE
+          ? anchor.parentElement
+          : anchor
+      )?.closest(".note-link");
+
+      if (!link) return;
+
+      /* Só age se não sobrar texto do link depois do cursor. */
+      const caret =
+        selection.getRangeAt(0);
+
+      const tail =
+        document.createRange();
+
+      tail.setStart(
+        caret.startContainer,
+        caret.startOffset
+      );
+
+      tail.setEnd(
+        link,
+        link.childNodes.length
+      );
+
+      if (tail.toString() !== "") {
+        return;
+      }
+
+      event.preventDefault();
+
+      /*
+        O cursor precisa ficar depois de um espaço de verdade:
+        logo na borda do link o navegador o puxaria de volta
+        pra dentro dele.
+      */
+      let next = link.nextSibling;
+
+      if (
+        !next ||
+        next.nodeType !== Node.TEXT_NODE
+      ) {
+        next = document.createTextNode(
+          "\u00A0"
+        );
+
+        link.after(next);
+      } else if (
+        !/^[\s\u00A0]/.test(next.textContent)
+      ) {
+        next.textContent =
+          "\u00A0" + next.textContent;
+      }
+
+      const outside =
+        document.createRange();
+
+      outside.setStart(next, 1);
+      outside.collapse(true);
+
+      selection.removeAllRanges();
+      selection.addRange(outside);
+    }
+  );
 
   document
     .getElementById("noteBlockBtn")

@@ -189,6 +189,14 @@ function updatePositions() {
 
     if (!element) return;
 
+    /* O bloco arrastado segue o mouse, não a oscilação. */
+    if (
+      AppState.drag &&
+      AppState.drag.id === node.id
+    ) {
+      return;
+    }
+
     const ampX =
       (node.large ? 5 : 8) *
       wobbleScale;
@@ -306,7 +314,12 @@ function getLocalRect(element) {
 function resolveVisibleOverlaps() {
   const elements = [
     ...nodeElementCache.values()
-  ];
+  ].filter(
+    element =>
+      !element.classList.contains(
+        "dragging"
+      )
+  );
 
   if (elements.length < 2) {
     return;
@@ -517,6 +530,9 @@ function onPointerDown(event) {
     areaW: area.width,
     areaH: area.height
   };
+
+  /* Shift + arrastar move só este bloco, sem os filhos. */
+  startFollowers(id, event.shiftKey);
 
   event.currentTarget.setPointerCapture(
     event.pointerId
@@ -1427,4 +1443,279 @@ function bindReparent() {
       }
     }
   );
+}
+
+/* ============================================================
+   FILHOS SEGUEM O BLOCO (atraso suave)
+   ============================================================
+   Ao arrastar um bloco, cada descendente tenta ficar na mesma
+   distância que tinha do próprio pai, mas anda devagar até lá.
+   Como cada um segue o pai (que também está atrasado), os
+   netos atrasam mais que os filhos. Depois de soltar, eles
+   continuam deslizando até parar e só então a posição é salva.
+*/
+
+const FOLLOW_ENABLED_KEY =
+  "mapa-follow-enabled";
+
+const FOLLOW_WEIGHT_KEY =
+  "mapa-follow-weight";
+
+let followEnabled = true;
+let followWeight = 50;
+
+/* [{ id, parentId, dx, dy }] — pais sempre antes dos filhos. */
+let followerList = null;
+let followerLastTime = 0;
+
+function startFollowers(draggedId, moveAlone) {
+  followerList = null;
+
+  if (!followEnabled || moveAlone) return;
+
+  const list = [];
+  const queue = [draggedId];
+
+  while (queue.length > 0) {
+    const parentId = queue.shift();
+    const parent = getNode(parentId);
+
+    childrenOf(parentId).forEach(child => {
+      list.push({
+        id: child.id,
+        parentId,
+        dx: child.x - parent.x,
+        dy: child.y - parent.y
+      });
+
+      queue.push(child.id);
+    });
+  }
+
+  if (list.length === 0) return;
+
+  followerList = list;
+  followerLastTime = performance.now();
+}
+
+/* Onde o filho deveria estar: posição do pai + distância original. */
+function followerTarget(follower, parent) {
+  return {
+    x: clamp(
+      parent.x + follower.dx,
+      -WORLD_MARGIN_RATIO,
+      1 + WORLD_MARGIN_RATIO
+    ),
+    y: clamp(
+      parent.y + follower.dy,
+      -WORLD_MARGIN_RATIO,
+      1 + WORLD_MARGIN_RATIO
+    )
+  };
+}
+
+/* Chamada a cada frame pelo loop de animação. */
+function stepFollowers() {
+  if (!followerList) return;
+
+  const now = performance.now();
+
+  const dt = Math.min(
+    (now - followerLastTime) / 1000,
+    0.05
+  );
+
+  followerLastTime = now;
+
+  /*
+    Constante de tempo: quanto maior o peso, mais devagar
+    o filho chega (de ~0,06s a ~0,8s).
+  */
+  const tau =
+    0.05 + (followWeight / 100) * 0.75;
+
+  const k = 1 - Math.exp(-dt / tau);
+
+  const area =
+    document
+      .getElementById("board")
+      .getBoundingClientRect();
+
+  let moving = false;
+
+  for (const follower of followerList) {
+    const node = getNode(follower.id);
+    const parent = getNode(follower.parentId);
+
+    /* Trocou de mapa ou apagou algo no meio: desiste. */
+    if (!node || !parent) {
+      followerList = null;
+      return;
+    }
+
+    const { x: targetX, y: targetY } =
+      followerTarget(follower, parent);
+
+    /* Escondidos (galho fechado) andam junto, sem animação. */
+    if (!isVisible(node)) {
+      node.x = targetX;
+      node.y = targetY;
+      continue;
+    }
+
+    node.x += (targetX - node.x) * k;
+    node.y += (targetY - node.y) * k;
+
+    if (
+      Math.abs(targetX - node.x) *
+        area.width > 0.5 ||
+      Math.abs(targetY - node.y) *
+        area.height > 0.5
+    ) {
+      moving = true;
+    }
+  }
+
+  if (!moving && !AppState.drag) {
+    /* Encaixa exatamente no lugar (o último pedacinho é < 1px). */
+    for (const follower of followerList) {
+      const node = getNode(follower.id);
+
+      const target = followerTarget(
+        follower,
+        getNode(follower.parentId)
+      );
+
+      node.x = target.x;
+      node.y = target.y;
+    }
+
+    followerList = null;
+
+    touchMapEdited();
+    saveData(false);
+  }
+}
+
+function initFollowPreferences() {
+  const toggle =
+    document.getElementById(
+      "followToggle"
+    );
+
+  const options =
+    document.getElementById(
+      "followOptions"
+    );
+
+  const slider =
+    document.getElementById(
+      "followWeightSlider"
+    );
+
+  const valueLabel =
+    document.getElementById(
+      "followWeightValue"
+    );
+
+  followEnabled =
+    localStorage.getItem(
+      FOLLOW_ENABLED_KEY
+    ) !== "0";
+
+  const savedWeight = parseInt(
+    localStorage.getItem(
+      FOLLOW_WEIGHT_KEY
+    ),
+    10
+  );
+
+  followWeight = Number.isNaN(
+    savedWeight
+  )
+    ? 50
+    : clamp(savedWeight, 1, 100);
+
+  toggle.checked = followEnabled;
+  options.hidden = !followEnabled;
+  slider.value = followWeight;
+  valueLabel.textContent = followWeight;
+
+  toggle.addEventListener(
+    "change",
+    () => {
+      followEnabled = toggle.checked;
+      options.hidden = !followEnabled;
+
+      localStorage.setItem(
+        FOLLOW_ENABLED_KEY,
+        followEnabled ? "1" : "0"
+      );
+    }
+  );
+
+  slider.addEventListener(
+    "input",
+    () => {
+      followWeight = Number(slider.value);
+      valueLabel.textContent = followWeight;
+
+      localStorage.setItem(
+        FOLLOW_WEIGHT_KEY,
+        String(followWeight)
+      );
+    }
+  );
+}
+
+/* ============================================================
+   LINK DE ANOTAÇÃO PARA OUTRO BLOCO ([[nome do bloco]])
+   ============================================================ */
+
+async function goToLinkedBlock(name) {
+  const map = currentMap();
+
+  if (!map) return;
+
+  const clean = (name || "").trim();
+
+  const wanted =
+    normalizeSearchText(clean);
+
+  /* Ignora maiúsculas e acentos; com nomes repetidos vale o primeiro. */
+  const target = wanted
+    ? map.nodes.find(
+        node =>
+          normalizeSearchText(
+            (node.title || "").trim()
+          ) === wanted
+      )
+    : null;
+
+  if (!target) {
+    await showAlert(
+      `Bloco "${clean}" não encontrado.`
+    );
+    return;
+  }
+
+  /* Abre os blocos de cima, pra ele estar visível. */
+  let ancestor = target.parentId
+    ? getNode(target.parentId)
+    : null;
+
+  while (ancestor) {
+    ancestor.childrenOpen = true;
+
+    ancestor = ancestor.parentId
+      ? getNode(ancestor.parentId)
+      : null;
+  }
+
+  AppState.selectedId = target.id;
+
+  render();
+  saveData(false);
+
+  focusSelectedNode();
 }

@@ -51,6 +51,16 @@ function htmlToMarkdown(html) {
       case "BR":
         return "\n";
 
+      case "SPAN":
+        if (
+          node.classList.contains(
+            "note-link"
+          )
+        ) {
+          return `[[${children}]]`;
+        }
+        return children;
+
       case "DIV":
         if (
           node.classList.contains(
@@ -359,6 +369,10 @@ function formatInlineMarkdown(
   let escaped = escapeHtml(line);
 
   escaped = escaped
+    .replace(
+      /\[\[(.+?)\]\]/g,
+      '<span class="note-link">$1</span>'
+    )
     .replace(
       /\*\*(.+?)\*\*/g,
       "<b>$1</b>"

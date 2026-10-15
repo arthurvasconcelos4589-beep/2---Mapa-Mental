@@ -255,6 +255,22 @@
           </label>
 
           <label class="toggle-row">
+            <span>Filhos seguem o bloco</span>
+            <input id="followToggle" type="checkbox" checked>
+            <span class="toggle-switch"></span>
+          </label>
+
+          <div id="followOptions">
+            <div class="slider-row">
+              <div class="slider-label">
+                <span>Peso dos filhos</span>
+                <span id="followWeightValue" class="slider-value">50</span>
+              </div>
+              <input id="followWeightSlider" type="range" min="1" max="100" step="1" value="50">
+            </div>
+          </div>
+
+          <label class="toggle-row">
             <span>Blocos se movem</span>
             <input id="wobbleEnabledToggle" type="checkbox" checked>
             <span class="toggle-switch"></span>
@@ -299,7 +315,7 @@
     </div>
 
     <div id="panelFooter">
-      <span id="panelVersion">v3.2.0</span>
+      <span id="panelVersion">v3.3.0</span>
       <button id="panelHelpBtn" class="icon-button" title="Log de atualizações">?</button>
     </div>
   </aside>
@@ -388,6 +404,7 @@
         <button type="button" id="noteItalicBtn" class="note-tool" title="Itálico (Ctrl+I)"><i>I</i></button>
         <button type="button" id="noteUnderlineBtn" class="note-tool" title="Sublinhado (Ctrl+U)"><u>S</u></button>
         <button type="button" id="noteInlineCodeBtn" class="note-tool" title="Código em linha">{ }</button>
+        <button type="button" id="noteLinkBtn" class="note-tool" title="Link para outro bloco">[[ ]]</button>
 
         <span class="note-tool-divider"></span>
 

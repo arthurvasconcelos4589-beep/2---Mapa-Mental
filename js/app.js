@@ -295,7 +295,14 @@ document
   Loop de animação.
 */
 function animationLoop() {
-  if (!AppState.drag && !AppState.boardPan) {
+  /*
+    Filhos do bloco arrastado deslizando atrás dele (inclusive
+    depois de soltar). O bloco arrastado em si é ignorado pelo
+    updatePositions, então os outros podem continuar oscilando.
+  */
+  stepFollowers();
+
+  if (!AppState.boardPan) {
     updatePositions();
   }
 
@@ -317,6 +324,7 @@ loadTheme();
 loadGridPreference();
 initZoomPreferences();
 bindReparent();
+initFollowPreferences();
 loadShortcutOverrides();
 updateSidebarWidthVars();
 bindPanelTabs();

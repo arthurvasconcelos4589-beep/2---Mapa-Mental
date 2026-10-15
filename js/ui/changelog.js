@@ -2,9 +2,19 @@
    LOG DE ATUALIZAÇÕES
    ============================================================ */
 
-const APP_VERSION = "v3.2.0";
+const APP_VERSION = "v3.3.0";
 
 const UPDATE_LOG = [
+  {
+    version: "v3.3.0",
+    changes: [
+      "Filhos seguem o bloco: ao arrastar um bloco, os filhos e netos vão atrás devagar, mantendo a distância que tinham, e ficam na nova posição quando você solta. Cada um segue o próprio pai, então os de baixo atrasam mais. Segure Shift ao arrastar pra mover só aquele bloco, sem os filhos",
+      "Em Estilo > Movimento: novo interruptor \"Filhos seguem o bloco\" e slider \"Peso dos filhos\" (quanto maior, mais devagar eles seguem)",
+      "Enquanto você arrasta um bloco, os outros blocos agora continuam se movendo normalmente (antes todos paravam durante o arraste)",
+      "Links entre blocos nas anotações: o novo botão [[ ]] na barra da anotação transforma o texto selecionado em link (sem seleção, entra um texto de exemplo pra você digitar o nome por cima; aperte a seta → no fim do nome pra sair do link e continuar escrevendo). Clicar no link leva até o bloco com aquele nome, ignorando maiúsculas e acentos; com nomes repetidos vale o primeiro, e se o bloco não existir o app avisa. Renomear o bloco quebra o link",
+      "Os links também vão na exportação e importação em Markdown, escritos como [[nome]]"
+    ]
+  },
   {
     version: "v3.2.0",
     changes: [
