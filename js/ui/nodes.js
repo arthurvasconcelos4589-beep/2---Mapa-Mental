@@ -497,12 +497,6 @@ function onPointerDown(event) {
 
   if (!node) return;
 
-  /*
-    Guarda o estado antes do arrasto começar,
-    pra dar pra desfazer com Ctrl+Z depois.
-  */
-  pushHistory();
-
   const area =
     document
       .getElementById("board")
@@ -528,7 +522,8 @@ function onPointerDown(event) {
         ).split(" ")[1]
       ) || 0,
     areaW: area.width,
-    areaH: area.height
+    areaH: area.height,
+    historyPushed: false
   };
 
   /* Shift + arrastar move só este bloco, sem os filhos. */
@@ -558,6 +553,16 @@ function handlePointerMove(event) {
 
   if (!element || !node) {
     return;
+  }
+
+  /*
+    Guarda o estado só quando o bloco realmente começa a se
+    mexer (um simples clique não vira passo do histórico),
+    pra dar pra desfazer com Ctrl+Z depois.
+  */
+  if (!AppState.drag.historyPushed) {
+    pushHistory();
+    AppState.drag.historyPushed = true;
   }
 
   const area =
@@ -1229,8 +1234,35 @@ function isReparentSearchOpen() {
   return !!modal && !modal.hidden;
 }
 
+/*
+  A mesma janela de busca serve pra duas coisas:
+  "reparent" (escolher o novo pai) e "goto" (ir até um bloco).
+*/
+let blockSearchMode = "reparent";
+
+function openGoToBlock() {
+  if (!currentMap()) return;
+
+  blockSearchMode = "goto";
+
+  openBlockSearch();
+}
+
 function openReparentSearch() {
   if (!pendingReparentId) return;
+
+  blockSearchMode = "reparent";
+
+  openBlockSearch();
+}
+
+function openBlockSearch() {
+  document.getElementById(
+    "reparentModalTitle"
+  ).textContent =
+    blockSearchMode === "goto"
+      ? "Ir para bloco"
+      : "Escolher novo pai";
 
   const input =
     document.getElementById(
@@ -1264,8 +1296,12 @@ function closeReparentSearch() {
 function renderReparentList() {
   const map = currentMap();
 
-  const node =
-    getNode(pendingReparentId);
+  const reparenting =
+    blockSearchMode === "reparent";
+
+  const node = reparenting
+    ? getNode(pendingReparentId)
+    : null;
 
   const list =
     document.getElementById(
@@ -1274,10 +1310,13 @@ function renderReparentList() {
 
   list.innerHTML = "";
 
-  if (!map || !node) return;
+  if (!map || (reparenting && !node)) {
+    return;
+  }
 
-  const blocked =
-    getDescendants(node.id);
+  const blocked = reparenting
+    ? getDescendants(node.id)
+    : new Set();
 
   const query = normalizeSearchText(
     document
@@ -1289,9 +1328,10 @@ function renderReparentList() {
 
   const matches = map.nodes.filter(
     candidate =>
-      candidate.id !== node.id &&
-      candidate.id !== node.parentId &&
-      !blocked.has(candidate.id) &&
+      (!reparenting ||
+        (candidate.id !== node.id &&
+          candidate.id !== node.parentId &&
+          !blocked.has(candidate.id))) &&
       normalizeSearchText(
         candidate.title
       ).includes(query)
@@ -1352,8 +1392,15 @@ function renderReparentList() {
     row.addEventListener(
       "click",
       () => {
+        const mode = blockSearchMode;
+
         closeReparentSearch();
-        reparentTo(candidate.id);
+
+        if (mode === "goto") {
+          goToBlockById(candidate.id);
+        } else {
+          reparentTo(candidate.id);
+        }
       }
     );
 
@@ -1699,6 +1746,15 @@ async function goToLinkedBlock(name) {
     return;
   }
 
+  goToBlockById(target.id);
+}
+
+/* Seleciona o bloco e leva a câmera até ele (zoom de 120%). */
+function goToBlockById(targetId) {
+  const target = getNode(targetId);
+
+  if (!target) return;
+
   /* Abre os blocos de cima, pra ele estar visível. */
   let ancestor = target.parentId
     ? getNode(target.parentId)
@@ -1718,4 +1774,61 @@ async function goToLinkedBlock(name) {
   saveData(false);
 
   focusSelectedNode();
+}
+
+/*
+  Renomear um bloco atualiza os links [[nome]] das anotações que
+  apontavam pra ele. Com nomes repetidos o link vale pro primeiro
+  bloco, então só o "dono" do nome tem os links atualizados.
+*/
+function updateLinksToRenamedNode(node, newTitle) {
+  const map = currentMap();
+
+  const oldKey = normalizeSearchText(
+    (node.title || "").trim()
+  );
+
+  if (!map || !oldKey) return;
+
+  const owner = map.nodes.find(
+    other =>
+      normalizeSearchText(
+        (other.title || "").trim()
+      ) === oldKey
+  );
+
+  if (owner !== node) return;
+
+  map.nodes.forEach(other => {
+    if (
+      !other.note ||
+      !other.note.includes("note-link")
+    ) {
+      return;
+    }
+
+    const box =
+      document.createElement("div");
+
+    box.innerHTML = other.note;
+
+    let changed = false;
+
+    box
+      .querySelectorAll(".note-link")
+      .forEach(link => {
+        if (
+          normalizeSearchText(
+            link.textContent.trim()
+          ) === oldKey
+        ) {
+          link.textContent = newTitle;
+          changed = true;
+        }
+      });
+
+    if (changed) {
+      other.note = box.innerHTML;
+    }
+  });
 }

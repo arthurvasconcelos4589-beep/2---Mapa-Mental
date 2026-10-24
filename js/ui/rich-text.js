@@ -204,6 +204,320 @@ function insertNoteLink() {
   triggerNoteSave();
 }
 
+/*
+  Leva o cursor pra fora do link. Precisa ficar depois de um
+  espaço de verdade: logo na borda do link o navegador o puxaria
+  de volta pra dentro dele.
+*/
+function moveCaretOutOfLink(link) {
+  let next = link.nextSibling;
+
+  if (
+    !next ||
+    next.nodeType !== Node.TEXT_NODE
+  ) {
+    next = document.createTextNode(
+      "\u00A0"
+    );
+
+    link.after(next);
+  } else if (
+    !/^[\s\u00A0]/.test(next.textContent)
+  ) {
+    next.textContent =
+      "\u00A0" + next.textContent;
+  }
+
+  const outside =
+    document.createRange();
+
+  outside.setStart(next, 1);
+  outside.collapse(true);
+
+  const selection =
+    window.getSelection();
+
+  selection.removeAllRanges();
+  selection.addRange(outside);
+}
+
+/*
+  Digitar "[[" cria um link, igual ao botão [[ ]]. Como o "[" já
+  fecha sozinho com "]", some com o par antes de criar o link.
+*/
+function handleNoteLinkTrigger(event) {
+  if (event.key !== "[") return false;
+
+  const selection =
+    window.getSelection();
+
+  if (
+    !selection ||
+    !selection.rangeCount ||
+    !selection.isCollapsed
+  ) {
+    return false;
+  }
+
+  const node = selection.anchorNode;
+
+  if (
+    node.nodeType !== Node.TEXT_NODE ||
+    getCaretLink()
+  ) {
+    return false;
+  }
+
+  const offset = selection.anchorOffset;
+
+  if (node.textContent[offset - 1] !== "[") {
+    return false;
+  }
+
+  event.preventDefault();
+
+  if (node.textContent[offset] === "]") {
+    node.deleteData(offset, 1);
+  }
+
+  node.deleteData(offset - 1, 1);
+
+  const range = document.createRange();
+
+  range.setStart(node, offset - 1);
+  range.collapse(true);
+
+  selection.removeAllRanges();
+  selection.addRange(range);
+
+  insertNoteLink();
+
+  return true;
+}
+
+/* ---------- Autocompletar do link ---------- */
+
+let linkSuggestMatches = [];
+let linkSuggestIndex = 0;
+
+function getLinkSuggestBox() {
+  return document.getElementById(
+    "noteLinkSuggest"
+  );
+}
+
+/* O link em que o cursor está (sem texto selecionado), se houver. */
+function getCaretLink() {
+  const selection =
+    window.getSelection();
+
+  if (
+    !selection ||
+    !selection.rangeCount ||
+    !selection.isCollapsed
+  ) {
+    return null;
+  }
+
+  const anchor = selection.anchorNode;
+
+  const element =
+    anchor.nodeType === Node.TEXT_NODE
+      ? anchor.parentElement
+      : anchor;
+
+  const link =
+    element?.closest(".note-link");
+
+  return link &&
+    getNoteEditor().contains(link)
+    ? link
+    : null;
+}
+
+function hideLinkSuggest() {
+  getLinkSuggestBox().hidden = true;
+  linkSuggestMatches = [];
+}
+
+function refreshLinkSuggest() {
+  const link = getCaretLink();
+  const map = currentMap();
+
+  if (!link || !map) {
+    hideLinkSuggest();
+    return;
+  }
+
+  const query = normalizeSearchText(
+    link.textContent.trim()
+  );
+
+  if (!query) {
+    hideLinkSuggest();
+    return;
+  }
+
+  /* Nome igual primeiro, depois começando com, depois contendo. */
+  const rank = node => {
+    const title = normalizeSearchText(
+      (node.title || "").trim()
+    );
+
+    if (title === query) return 0;
+    if (title.startsWith(query)) return 1;
+    if (title.includes(query)) return 2;
+    return 3;
+  };
+
+  linkSuggestMatches = map.nodes
+    .map(node => ({
+      node,
+      rank: rank(node)
+    }))
+    .filter(item => item.rank < 3)
+    .sort((a, b) => a.rank - b.rank)
+    .slice(0, 8)
+    .map(item => item.node);
+
+  if (linkSuggestMatches.length === 0) {
+    hideLinkSuggest();
+    return;
+  }
+
+  linkSuggestIndex = 0;
+
+  renderLinkSuggest(link);
+}
+
+function renderLinkSuggest(link) {
+  const box = getLinkSuggestBox();
+
+  box.innerHTML = "";
+
+  linkSuggestMatches.forEach(
+    (node, index) => {
+      const parent = node.parentId
+        ? getNode(node.parentId)
+        : null;
+
+      const item =
+        document.createElement("div");
+
+      item.className =
+        "note-link-suggest-item" +
+        (index === linkSuggestIndex
+          ? " active"
+          : "");
+
+      const title =
+        document.createElement("span");
+
+      title.className =
+        "note-link-suggest-title";
+
+      title.textContent = node.title;
+
+      const meta =
+        document.createElement("span");
+
+      meta.className =
+        "note-link-suggest-meta";
+
+      meta.textContent = parent
+        ? `dentro de: ${parent.title}`
+        : "bloco principal";
+
+      item.appendChild(title);
+      item.appendChild(meta);
+
+      /* Não tira o foco do campo de anotação. */
+      item.addEventListener(
+        "mousedown",
+        event => event.preventDefault()
+      );
+
+      item.addEventListener(
+        "click",
+        () => acceptLinkSuggestion(index)
+      );
+
+      box.appendChild(item);
+    }
+  );
+
+  box.hidden = false;
+
+  /* Embaixo do link; se não couber, em cima. */
+  const rect =
+    link.getBoundingClientRect();
+
+  const left = Math.max(
+    8,
+    Math.min(
+      rect.left,
+      window.innerWidth -
+        box.offsetWidth -
+        8
+    )
+  );
+
+  const top =
+    rect.bottom +
+      4 +
+      box.offsetHeight >
+    window.innerHeight
+      ? rect.top - box.offsetHeight - 4
+      : rect.bottom + 4;
+
+  box.style.left = `${left}px`;
+  box.style.top = `${Math.max(8, top)}px`;
+}
+
+function moveLinkSuggest(step) {
+  const total =
+    linkSuggestMatches.length;
+
+  linkSuggestIndex =
+    (linkSuggestIndex + step + total) %
+    total;
+
+  getLinkSuggestBox()
+    .querySelectorAll(
+      ".note-link-suggest-item"
+    )
+    .forEach((item, index) => {
+      item.classList.toggle(
+        "active",
+        index === linkSuggestIndex
+      );
+
+      if (index === linkSuggestIndex) {
+        item.scrollIntoView({
+          block: "nearest"
+        });
+      }
+    });
+}
+
+/* Escreve o nome exato do bloco no link e sai dele. */
+function acceptLinkSuggestion(index) {
+  const node =
+    linkSuggestMatches[index];
+
+  const link = getCaretLink();
+
+  if (!node || !link) return;
+
+  link.textContent = node.title;
+
+  hideLinkSuggest();
+
+  moveCaretOutOfLink(link);
+
+  triggerNoteSave();
+}
+
 function clearNoteFormatting() {
   getNoteEditor().focus();
   document.execCommand("removeFormat");
@@ -650,6 +964,10 @@ function handleNoteAutoPairsKeydown(
     return;
   }
 
+  if (handleNoteLinkTrigger(event)) {
+    return;
+  }
+
   if (handleNoteTypeOverClosing(event)) {
     return;
   }
@@ -693,6 +1011,79 @@ function bindNoteToolbar() {
       "click",
       insertNoteLink
     );
+
+  /*
+    Autocompletar: a lista aparece enquanto você digita dentro
+    de um link. Capturamos as teclas antes dos outros atalhos
+    do editor (Enter e Tab teriam outro uso).
+  */
+  const noteEditor = getNoteEditor();
+
+  noteEditor.addEventListener(
+    "input",
+    refreshLinkSuggest
+  );
+
+  noteEditor.addEventListener(
+    "blur",
+    hideLinkSuggest
+  );
+
+  document.addEventListener(
+    "selectionchange",
+    () => {
+      if (
+        !getLinkSuggestBox().hidden &&
+        !getCaretLink()
+      ) {
+        hideLinkSuggest();
+      }
+    }
+  );
+
+  noteEditor.addEventListener(
+    "keydown",
+    event => {
+      if (
+        getLinkSuggestBox().hidden ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.altKey
+      ) {
+        return;
+      }
+
+      if (
+        event.key === "ArrowDown" ||
+        event.key === "ArrowUp"
+      ) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        moveLinkSuggest(
+          event.key === "ArrowDown"
+            ? 1
+            : -1
+        );
+      } else if (
+        event.key === "Enter" ||
+        event.key === "Tab"
+      ) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        acceptLinkSuggestion(
+          linkSuggestIndex
+        );
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+
+        hideLinkSuggest();
+      }
+    },
+    true
+  );
 
   /* Clique num link leva até o bloco. */
   getNoteEditor().addEventListener(
@@ -770,37 +1161,7 @@ function bindNoteToolbar() {
 
       event.preventDefault();
 
-      /*
-        O cursor precisa ficar depois de um espaço de verdade:
-        logo na borda do link o navegador o puxaria de volta
-        pra dentro dele.
-      */
-      let next = link.nextSibling;
-
-      if (
-        !next ||
-        next.nodeType !== Node.TEXT_NODE
-      ) {
-        next = document.createTextNode(
-          "\u00A0"
-        );
-
-        link.after(next);
-      } else if (
-        !/^[\s\u00A0]/.test(next.textContent)
-      ) {
-        next.textContent =
-          "\u00A0" + next.textContent;
-      }
-
-      const outside =
-        document.createRange();
-
-      outside.setStart(next, 1);
-      outside.collapse(true);
-
-      selection.removeAllRanges();
-      selection.addRange(outside);
+      moveCaretOutOfLink(link);
     }
   );
 

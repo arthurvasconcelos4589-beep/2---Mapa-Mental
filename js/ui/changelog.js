@@ -2,9 +2,20 @@
    LOG DE ATUALIZAÇÕES
    ============================================================ */
 
-const APP_VERSION = "v3.3.0";
+const APP_VERSION = "v3.4.0";
 
 const UPDATE_LOG = [
+  {
+    version: "v3.4.0",
+    changes: [
+      "Desfazer e refazer: agora Ctrl+Z desfaz a última ação nos blocos (arrastar, criar, excluir, duplicar, reconectar, renomear, aplicar layout, escrever numa anotação...) e Ctrl+Y ou Ctrl+Shift+Z refaz. Dentro do campo de anotação o Ctrl+Z continua desfazendo só o texto que você digita. As teclas podem ser mudadas na aba Atalhos",
+      "Corrigido: só clicar num bloco não conta mais como uma ação no histórico (antes cada clique guardava um passo igual ao anterior); agora o passo só é guardado quando o bloco realmente se move",
+      "Novo atalho / (Ir para bloco): abre uma lista com busca (ignora acentos e maiúsculas, mostra de qual bloco cada um faz parte) e leva a câmera até o bloco escolhido, com zoom de 120%, abrindo os blocos de cima se estiverem fechados. Enter escolhe o primeiro resultado",
+      "Renomear atualiza os links: ao renomear um bloco, os links [[nome]] das anotações que apontavam pra ele passam a usar o novo nome. Com nomes repetidos, vale o primeiro bloco. Ctrl+Z desfaz o renomear e os links juntos",
+      "Autocompletar nos links: enquanto você digita dentro de um link, aparece uma lista de blocos parecidos. Use ↑ e ↓, Enter ou Tab (ou clique) para escolher — o link recebe o nome exato do bloco e o cursor sai dele — e Esc para fechar a lista",
+      "Digitar [[ à mão agora cria o link automaticamente, igual ao botão [[ ]]"
+    ]
+  },
   {
     version: "v3.3.0",
     changes: [

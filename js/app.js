@@ -143,6 +143,14 @@ document
     renameSelectedNode
   );
 
+let noteHistoryNodeId = null;
+
+document
+  .getElementById("note")
+  .addEventListener("blur", () => {
+    noteHistoryNodeId = null;
+  });
+
 document
   .getElementById("note")
   .addEventListener(
@@ -158,6 +166,16 @@ document
         );
 
       if (!node) return;
+
+      /*
+        Primeira alteração desta anotação (desde que o cursor
+        entrou nela): guarda o estado antes, pra o Ctrl+Z fora
+        do campo desfazer o que foi escrito.
+      */
+      if (noteHistoryNodeId !== node.id) {
+        pushHistory();
+        noteHistoryNodeId = node.id;
+      }
 
       node.note =
         document.getElementById(

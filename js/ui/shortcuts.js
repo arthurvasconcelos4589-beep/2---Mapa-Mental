@@ -56,6 +56,34 @@ const SHORTCUT_DEFS = [
     run: () => centerView()
   },
   {
+    id: "undo",
+    label: "Desfazer",
+    defaultKey: "ctrl+z",
+    context: "global",
+    run: () => undo()
+  },
+  {
+    id: "redo",
+    label: "Refazer",
+    defaultKey: "ctrl+y",
+    context: "global",
+    run: () => redo()
+  },
+  {
+    id: "redo-alt",
+    label: "Refazer (alternativa)",
+    defaultKey: "ctrl+shift+z",
+    context: "global",
+    run: () => redo()
+  },
+  {
+    id: "goto-block",
+    label: "Ir para bloco",
+    defaultKey: "/",
+    context: "global",
+    run: () => openGoToBlock()
+  },
+  {
     id: "reparent-node",
     label: "Reconectar bloco",
     defaultKey: "m",

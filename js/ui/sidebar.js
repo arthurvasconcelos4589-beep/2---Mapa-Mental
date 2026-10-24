@@ -82,8 +82,15 @@ async function renameSelectedNode() {
 
   pushHistory();
 
-  node.title =
+  const newTitle =
     name.trim() || "SEM TÍTULO";
+
+  updateLinksToRenamedNode(
+    node,
+    newTitle
+  );
+
+  node.title = newTitle;
 
   touchMapEdited();
   render();
