@@ -33,6 +33,8 @@ function updateSidebar() {
   title.textContent = node.title;
   note.innerHTML = node.note || "";
 
+  ensureLineBelowNoteBlocks();
+
   empty.hidden = true;
   body.hidden = false;
 }

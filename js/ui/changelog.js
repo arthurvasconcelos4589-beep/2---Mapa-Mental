@@ -2,9 +2,16 @@
    LOG DE ATUALIZAÇÕES
    ============================================================ */
 
-const APP_VERSION = "v3.4.0";
+const APP_VERSION = "v3.4.1";
 
 const UPDATE_LOG = [
+  {
+    version: "v3.4.1",
+    changes: [
+      "Corrigido: o bloco de destaque (▤) da anotação agora sempre tem uma linha logo embaixo, pra você conseguir sair dele clicando ali ou descendo com a seta ↓. A linha é criada sozinha — inclusive em anotações antigas, ao abri-las — e, se for apagada (por uma seleção, por exemplo), volta sozinha",
+      "Corrigido: Backspace no começo da linha de baixo e Delete no fim do bloco não apagam mais essa linha sem querer: o cursor só passa pro outro lado"
+    ]
+  },
   {
     version: "v3.4.0",
     changes: [

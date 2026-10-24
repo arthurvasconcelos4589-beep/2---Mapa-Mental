@@ -910,6 +910,199 @@ function isInsideNoteBlock(node) {
   return false;
 }
 
+/*
+  Todo bloco de destaque precisa ter uma linha embaixo dele —
+  senão não há onde clicar (ou descer com ↓) pra sair do bloco.
+  Se faltar, cria uma linha vazia.
+*/
+function ensureLineBelowNoteBlocks() {
+  getNoteEditor()
+    .querySelectorAll(".note-block")
+    .forEach(block => {
+      const next = block.nextSibling;
+
+      const hasLine =
+        next &&
+        ((next.nodeType ===
+          Node.ELEMENT_NODE &&
+          !next.classList.contains(
+            "note-block"
+          )) ||
+          (next.nodeType ===
+            Node.TEXT_NODE &&
+            next.textContent.trim() !==
+              ""));
+
+      if (hasLine) return;
+
+      const line =
+        document.createElement("div");
+
+      line.appendChild(
+        document.createElement("br")
+      );
+
+      block.after(line);
+    });
+}
+
+function isNoteBlock(node) {
+  return !!(
+    node &&
+    node.nodeType === Node.ELEMENT_NODE &&
+    node.classList.contains("note-block")
+  );
+}
+
+/*
+  Backspace no começo da linha logo abaixo de um bloco, ou Delete
+  no fim do bloco, juntariam a linha ao bloco e a apagariam. Aqui
+  o cursor só passa pro outro lado, sem apagar nada.
+*/
+function handleNoteBlockBoundaryKeys(event) {
+  if (
+    (event.key !== "Backspace" &&
+      event.key !== "Delete") ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.altKey
+  ) {
+    return false;
+  }
+
+  const selection =
+    window.getSelection();
+
+  if (
+    !selection ||
+    !selection.rangeCount ||
+    !selection.isCollapsed
+  ) {
+    return false;
+  }
+
+  const editor = getNoteEditor();
+
+  const caret =
+    selection.getRangeAt(0);
+
+  if (
+    caret.startContainer === editor ||
+    !editor.contains(caret.startContainer)
+  ) {
+    return false;
+  }
+
+  /* A linha (filho direto do editor) em que o cursor está. */
+  let line = caret.startContainer;
+
+  while (line.parentNode !== editor) {
+    line = line.parentNode;
+  }
+
+  if (event.key === "Backspace") {
+    if (isNoteBlock(line)) return false;
+
+    let block = line.previousSibling;
+
+    while (
+      block &&
+      block.nodeType === Node.TEXT_NODE &&
+      block.textContent.trim() === ""
+    ) {
+      block = block.previousSibling;
+    }
+
+    if (!isNoteBlock(block)) return false;
+
+    /* Só no começo da linha. */
+    const toCaret =
+      document.createRange();
+
+    toCaret.selectNodeContents(line);
+    toCaret.setEnd(
+      caret.startContainer,
+      caret.startOffset
+    );
+
+    if (toCaret.toString() !== "") {
+      return false;
+    }
+
+    /* Linha vazia com outras linhas embaixo pode ser apagada. */
+    const next = line.nextSibling;
+
+    if (
+      line.textContent === "" &&
+      next &&
+      !isNoteBlock(next)
+    ) {
+      return false;
+    }
+
+    event.preventDefault();
+
+    const end =
+      document.createRange();
+
+    end.selectNodeContents(block);
+    end.collapse(false);
+
+    selection.removeAllRanges();
+    selection.addRange(end);
+
+    return true;
+  }
+
+  /* Delete: só no fim de um bloco. */
+  if (!isNoteBlock(line)) return false;
+
+  const toEnd = document.createRange();
+
+  toEnd.setStart(
+    caret.startContainer,
+    caret.startOffset
+  );
+  toEnd.setEnd(
+    line,
+    line.childNodes.length
+  );
+
+  if (toEnd.toString() !== "") {
+    return false;
+  }
+
+  let below = line.nextSibling;
+
+  while (
+    below &&
+    below.nodeType === Node.TEXT_NODE &&
+    below.textContent.trim() === ""
+  ) {
+    below = below.nextSibling;
+  }
+
+  if (!below) return false;
+
+  event.preventDefault();
+
+  const start =
+    document.createRange();
+
+  if (below.nodeType === Node.TEXT_NODE) {
+    start.setStart(below, 0);
+  } else {
+    start.selectNodeContents(below);
+  }
+
+  start.collapse(true);
+
+  selection.removeAllRanges();
+  selection.addRange(start);
+
+  return true;
+}
+
 function handleNoteBlockEnter(
   event
 ) {
@@ -952,6 +1145,10 @@ function handleNoteBlockEnter(
 function handleNoteAutoPairsKeydown(
   event
 ) {
+  if (handleNoteBlockBoundaryKeys(event)) {
+    return;
+  }
+
   if (handleNoteBlockEnter(event)) {
     return;
   }
@@ -1018,6 +1215,17 @@ function bindNoteToolbar() {
     do editor (Enter e Tab teriam outro uso).
   */
   const noteEditor = getNoteEditor();
+
+  /*
+    Antes do salvamento (capture), garante a linha embaixo de
+    cada bloco de destaque — mesmo que ela tenha sido apagada
+    por uma seleção, um recorte etc.
+  */
+  noteEditor.addEventListener(
+    "input",
+    ensureLineBelowNoteBlocks,
+    true
+  );
 
   noteEditor.addEventListener(
     "input",
